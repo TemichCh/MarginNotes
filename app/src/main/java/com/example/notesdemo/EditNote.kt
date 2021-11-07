@@ -2,6 +2,7 @@ package com.example.notesdemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -22,8 +23,8 @@ class EditNote : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
-
-        //val repo = NotesRepository(this)
+//TODO NotWorking
+//        setSupportActionBar(findViewById(R.id.toolbar_edit_note))
 
         val btnSave = findViewById<Button>(R.id.btn_save)
 
@@ -40,5 +41,11 @@ class EditNote : AppCompatActivity() {
                 Toast.makeText(this, "Invalid Input", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    //Adds menu itmes to right upmenu with 3 dots ... not what i want
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.edit_menu,menu)
+        return true//super.onCreateOptionsMenu(menu)
     }
 }
