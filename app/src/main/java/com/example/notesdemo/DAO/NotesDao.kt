@@ -2,18 +2,19 @@ package com.example.notesdemo.DAO
 
 import androidx.room.*
 import com.example.notesdemo.model.Notes
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDao {
     @Insert
-    fun InsertNote(note:Notes)
+    suspend fun InsertNote(note:Notes)
 
     @Query("Select * from notes")
-    fun gelAllNotes(): List<Notes>
+    fun gelAllNotes(): Flow<MutableList<Notes>>
 
     @Update
-    fun updateNote(note: Notes)
+    suspend fun updateNote(note: Notes)
 
     @Delete
-    fun deleteNote(note: Notes)
+    suspend fun deleteNote(note: Notes)
 }
