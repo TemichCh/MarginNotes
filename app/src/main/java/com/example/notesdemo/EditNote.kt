@@ -23,8 +23,9 @@ class EditNote : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
-//TODO NotWorking
-//        setSupportActionBar(findViewById(R.id.toolbar_edit_note))
+
+        setSupportActionBar(findViewById(R.id.toolbar_edit_note))
+
 
         val btnSave = findViewById<Button>(R.id.btn_save)
 
