@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             notes.let { adapter.setNotes(it) }
         }
 
+
         val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
         fab.setOnClickListener{
             val intent = Intent(this@MainActivity,EditNote::class.java)

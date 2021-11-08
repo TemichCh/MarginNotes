@@ -84,13 +84,12 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="16dp"
                 android:contentDescription="@string/image_view_image"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notes_text"
                 tools:srcCompat="@tools:sample/avatars" />
 
-            <LinearLayout
+            <!--LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/btn_del_note" />
-            </LinearLayout>
+            </LinearLayout-->
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

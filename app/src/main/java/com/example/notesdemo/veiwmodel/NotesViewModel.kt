@@ -17,6 +17,11 @@ class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
         //TODO.Implement
         //notesRep.
     }
+
+    fun update(note: Notes) = viewModelScope.launch {
+        //TODO.Implement
+        //notesRep.
+    }
 }
     class NotesViewModelFactory(private val notesRep: NotesRepository):ViewModelProvider.Factory{
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
