@@ -1,11 +1,10 @@
 package com.example.notesdemo
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
@@ -15,9 +14,9 @@ import java.util.*
 
 class EditNote : AppCompatActivity() {
 
-    var currentNote: Notes? = null
+    private var currentNote: Notes? = null
 
-    val notesVModel: NotesViewModel by viewModels {
+    private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
@@ -26,6 +25,14 @@ class EditNote : AppCompatActivity() {
         setContentView(R.layout.activity_edit_note)
 
         intent.getParcelableExtra<Notes>("note").also { currentNote = it }
+
+        currentNote?.let {
+            notes_name.setText(it.noteName)
+            notes_text.setText(it.noteText)
+            notes_image.setImageURI(Uri.EMPTY)
+        } ?: kotlin.run {
+
+        }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
 
@@ -44,7 +51,7 @@ class EditNote : AppCompatActivity() {
         R.id.menu_save -> {
             if (currentNote == null) {
                 currentNote = Notes(
-                    noteName = edit_text_name.text.toString(),
+                    noteName = notes_name.text.toString(),
                     noteText = notes_text.text.toString(),
                     createDate = Date()
                 )
