@@ -6,9 +6,11 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.notesdemo.DAO.Converters
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Entity(tableName = "Notes")
+@Parcelize
 data class Notes(
     @PrimaryKey(autoGenerate = true)
     var noteId: Int? = null,
@@ -18,7 +20,7 @@ data class Notes(
     val image: String? = null, //TODO: media.Image может быть заменить на путь к файлу локально
     val createDate: Date,
     var modifiedDate: Date? = null
-) : Parcelable {
+) : Parcelable /*{
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
@@ -51,4 +53,4 @@ data class Notes(
             return arrayOfNulls(size)
         }
     }
-}
+}*/
