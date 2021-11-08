@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
@@ -50,15 +51,18 @@ class EditNote : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
             if (currentNote == null) {
-                currentNote = Notes(
+                val newNote = Notes(
                     noteName = notes_name.text.toString(),
                     noteText = notes_text.text.toString(),
                     createDate = Date()
                 )
-                notesVModel.insert(currentNote!!)
+                notesVModel.insert(newNote)
+                currentNote = newNote
+                Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
             } else {
                 currentNote!!.modifiedDate = Date()
                 notesVModel.update(currentNote!!)
+                Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
             }
             true
         }

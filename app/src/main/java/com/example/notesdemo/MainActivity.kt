@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    val notesVModel:NotesViewModel by viewModels {
+    val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
@@ -26,15 +26,23 @@ class MainActivity : AppCompatActivity() {
         recyclerview_notes.layoutManager = LinearLayoutManager(this)
         recyclerview_notes.adapter = adapter
 
-        notesVModel.allNotes.observe(this){ notes->
+        adapter.setOnNoteTapListener{ note ->
+            val intent = Intent(this@MainActivity, EditNote::class.java)
+            intent.putExtra("note", note)
+            startActivity(intent)
+        }
+
+        notesVModel.allNotes.observe(this) { notes ->
             notes.let { adapter.setNotes(it) }
         }
 
 
         val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-        fab.setOnClickListener{
-            val intent = Intent(this@MainActivity,EditNote::class.java)
+        fab.setOnClickListener {
+            val intent = Intent(this@MainActivity, EditNote::class.java)
             startActivity(intent)
         }
+
+
     }
 }

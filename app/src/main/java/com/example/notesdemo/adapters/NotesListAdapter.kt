@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ExpandableListView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notesdemo.R
 import com.example.notesdemo.model.Notes
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.Flow
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     var notesList = mutableListOf<Notes>()
+
+    private var listener:((Notes)-> Unit)?=null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setNotes(notes: List<Notes>) {
@@ -32,13 +35,23 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         holder.itemName.text = note.noteName
         holder.itemDate.text = note.createDate.toString()
 
+        holder.itemView.setOnClickListener {
+            listener?.invoke(notesList[position])
+        }
+
+    }
+
+    fun setOnNoteTapListener(listener:((Notes)->Unit)){
+        this.listener = listener
     }
 
     override fun getItemCount(): Int {
         return notesList.size
     }
 
+
 }
+
 
 class NotesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val itemDate = view.list_item_date
