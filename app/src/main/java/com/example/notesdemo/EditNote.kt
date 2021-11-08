@@ -26,6 +26,7 @@ class EditNote : AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val btnSave = findViewById<Button>(R.id.btn_save)
 
