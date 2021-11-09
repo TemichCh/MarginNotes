@@ -17,7 +17,7 @@ data class Notes(
     val userId: String? = null, //на будущее для разделения по юзерам
     val noteName: String,
     val noteText: String,
-    val image: String? = null, //TODO: media.Image может быть заменить на путь к файлу локально
+    var image: String? = null, //TODO: media.Image может быть заменить на путь к файлу локально
     val createDate: Date,
     var modifiedDate: Date? = null
 ) : Parcelable /*{

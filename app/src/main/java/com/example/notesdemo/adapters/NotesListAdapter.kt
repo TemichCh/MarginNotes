@@ -33,7 +33,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         val note = notesList[position]
         holder.itemName.text = note.noteName
         holder.itemDate.text = note.createDate.humanizeDiff(Date())// .toString()
-        holder.itemText.text = note.noteText
+        holder.itemText.text = note.image.toString()//note.noteText
 
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])

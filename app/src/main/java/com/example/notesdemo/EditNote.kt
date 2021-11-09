@@ -1,5 +1,6 @@
 package com.example.notesdemo
 
+import android.app.Activity
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,12 @@ import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import kotlinx.android.synthetic.main.activity_edit_note.*
 import java.util.*
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
+
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.net.toUri
+
 
 class EditNote : AppCompatActivity() {
 
@@ -20,6 +27,15 @@ class EditNote : AppCompatActivity() {
     private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
+
+    var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                notes_image.setTag(uri.toString())
+                notes_image.setImageURI(uri)
+                //currentNote?.image = uri.path
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +46,8 @@ class EditNote : AppCompatActivity() {
         currentNote?.let {
             notes_name.setText(it.noteName)
             notes_text.setText(it.noteText)
-            notes_image.setImageURI(Uri.EMPTY)
+            notes_image.setImageURI(null)
+            notes_image.setImageURI(it.image?.toUri())
         } ?: kotlin.run {
 
         }
@@ -55,6 +72,7 @@ class EditNote : AppCompatActivity() {
                 val newNote = Notes(
                     noteName = notes_name.text.toString(),
                     noteText = notes_text.text.toString(),
+                    image = notes_image.getTag().toString(),
                     createDate = Date()
                 )
                 notesVModel.insert(newNote)
@@ -62,11 +80,11 @@ class EditNote : AppCompatActivity() {
                 Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
             } else {
                 val newNote = Notes(
-                    noteId= currentNote!!.noteId,
+                    noteId = currentNote!!.noteId,
                     noteName = notes_name.text.toString(),
                     noteText = notes_text.text.toString(),
-                    //notes_image = notes_image.resources.u
                     createDate = currentNote!!.createDate,
+                    image = notes_image.getTag().toString(),
                     modifiedDate = Date()
                 )
                 currentNote = newNote
@@ -76,12 +94,16 @@ class EditNote : AppCompatActivity() {
             true
         }
         R.id.menu_delete -> {
-            if (currentNote != null){
+            if (currentNote != null) {
                 notesVModel.delete(currentNote!!)
                 true
-            }
-            else false
+            } else false
 
+        }
+        R.id.menu_addimage -> {
+            resultLauncher.launch("image/*")
+
+            true
         }
         else -> {
             // If we got here, the user's action was not recognized.
