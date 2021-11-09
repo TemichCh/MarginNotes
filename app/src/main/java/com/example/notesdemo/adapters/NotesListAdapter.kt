@@ -33,6 +33,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         val note = notesList[position]
         holder.itemName.text = note.noteName
         holder.itemDate.text = note.createDate.humanizeDiff(Date())// .toString()
+        holder.itemText.text = note.noteText
 
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
@@ -55,4 +56,6 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 class NotesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val itemDate = view.list_item_date
     val itemName = view.list_item_name
+    val itemText = view.list_item_text
+    val image = view.iv_has_image
 }
