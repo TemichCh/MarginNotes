@@ -10,9 +10,9 @@
     <style name="Profile.EditText" parent="Profile">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:paddingTop">4dp</item>
-        <item name="android:enabled">false</item>
-        <item name="android:focusableInTouchMode">false</item>
-        <item name="android:focusable">false</item>
+        <item name="android:enabled">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:focusable">true</item>
     </style>
 
     <style name="Profile.EditText.Single" parent="Profile.EditText">
