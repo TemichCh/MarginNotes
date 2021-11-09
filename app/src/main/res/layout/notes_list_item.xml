@@ -6,41 +6,53 @@
     android:orientation="vertical"-->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_size"
     android:padding="@dimen/spacing_normal_16"
     android:background="@android:color/white">
 
 
+    <ImageView
+        android:id="@+id/iv_has_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        tools:srcCompat="@tools:sample/avatars"
+        android:layout_alignParentStart="true" />
+
     <TextView
         android:id="@+id/list_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textSize="11sp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:textColor="@color/color_gray_dark" />
+        android:textColor="@color/color_gray_dark"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/list_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_primary"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="14sp"
+        android:layout_toStartOf="@id/list_item_date"
         android:layout_toLeftOf="@id/list_item_date"
-        android:layout_marginLeft="@dimen/spacing_normal_16"
-        android:layout_marginRight="@dimen/spacing_normal_16"
-        />
+        android:layout_toRightOf="@+id/iv_has_image"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_primary"
+        android:textSize="14sp"
+        android:layout_toEndOf="@+id/iv_has_image" />
+
     <TextView
         android:id="@+id/list_item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_gray_dark"
-        android:textSize="14sp"
-        android:layout_marginLeft="@dimen/spacing_normal_16"
-        android:layout_marginRight="@dimen/spacing_normal_16"
         android:layout_below="@id/list_item_name"
-        />
+        android:layout_toEndOf="@id/iv_has_image"
+        android:layout_toRightOf="@+id/iv_has_image"
+        android:textColor="@color/color_gray_dark"
+        android:textSize="14sp" />
 <!--/LinearLayout-->
 </RelativeLayout>
