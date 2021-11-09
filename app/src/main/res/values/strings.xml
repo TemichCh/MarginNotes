@@ -6,4 +6,5 @@
     <string name="multi_line_txt_desc">Укажите текст заметки</string>
     <string name="btn_save_note">Сохранить</string>
     <string name="btn_del_note">Удалить</string>
+    <string name="action_search">Найти</string>
 </resources>
