@@ -4,16 +4,15 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ExpandableListView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notesdemo.R
+import com.example.notesdemo.extensions.humanizeDiff
 import com.example.notesdemo.model.Notes
 import kotlinx.android.synthetic.main.notes_list_item.view.*
-import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
-    var notesList = mutableListOf<Notes>()
+    private var notesList = mutableListOf<Notes>()
 
     private var listener:((Notes)-> Unit)?=null
 
@@ -33,7 +32,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = notesList[position]
         holder.itemName.text = note.noteName
-        holder.itemDate.text = note.createDate.toString()
+        holder.itemDate.text = note.createDate.humanizeDiff(Date())// .toString()
 
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
