@@ -7,4 +7,5 @@
     <string name="btn_save_note">Сохранить</string>
     <string name="btn_del_note">Удалить</string>
     <string name="action_search">Найти</string>
+    <string name="mnu_add_image">Добавить изображение</string>
 </resources>
