@@ -14,13 +14,11 @@ class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
     }
 
     fun delete(note: Notes) = viewModelScope.launch {
-        //TODO.Implement
-        //notesRep.
+        notesRep.deleteNote(note)
     }
 
     fun update(note: Notes) = viewModelScope.launch {
-        //TODO.Implement
-        //notesRep.
+        notesRep.updateNote(note)
     }
 }
     class NotesViewModelFactory(private val notesRep: NotesRepository):ViewModelProvider.Factory{

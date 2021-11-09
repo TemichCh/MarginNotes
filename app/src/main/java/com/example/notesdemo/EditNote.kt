@@ -50,6 +50,7 @@ class EditNote : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
+
             if (currentNote == null) {
                 val newNote = Notes(
                     noteName = notes_name.text.toString(),
@@ -60,7 +61,15 @@ class EditNote : AppCompatActivity() {
                 currentNote = newNote
                 Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
             } else {
-                currentNote!!.modifiedDate = Date()
+                val newNote = Notes(
+                    noteId= currentNote!!.noteId,
+                    noteName = notes_name.text.toString(),
+                    noteText = notes_text.text.toString(),
+                    //notes_image = notes_image.resources.u
+                    createDate = currentNote!!.createDate,
+                    modifiedDate = Date()
+                )
+                currentNote = newNote
                 notesVModel.update(currentNote!!)
                 Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
             }
