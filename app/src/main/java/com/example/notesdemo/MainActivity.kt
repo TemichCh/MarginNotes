@@ -2,8 +2,10 @@ package com.example.notesdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
 import com.example.notesdemo.veiwmodel.NotesViewModel
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setSupportActionBar(toolbar)
+
         val adapter = NotesListAdapter()
         recyclerview_notes.layoutManager = LinearLayoutManager(this)
         recyclerview_notes.adapter = adapter
@@ -36,6 +40,13 @@ class MainActivity : AppCompatActivity() {
             notes.let { adapter.setNotes(it) }
         }
 
+        val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+
+        with(recyclerview_notes) {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            addItemDecoration(divider)
+        }
+
 
         val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
         fab.setOnClickListener {
@@ -44,5 +55,10 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        return true//super.onCreateOptionsMenu(menu)
     }
 }
