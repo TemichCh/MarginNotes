@@ -2,41 +2,29 @@ package com.example.notesdemo
 
 import android.Manifest
 import android.app.Activity
-import android.app.Application
-import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import androidx.core.net.toUri
+import com.bumptech.glide.Glide
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import kotlinx.android.synthetic.main.activity_edit_note.*
 import java.util.*
-import android.content.Intent
-import android.content.Intent.ACTION_OPEN_DOCUMENT
-import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-import android.content.UriPermission
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Size
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import androidx.core.net.toUri
-import com.bumptech.glide.Glide
-import java.io.File
-import android.content.ContentUris
-import java.net.FileNameMap
 
 
 /** The request code for requesting [Manifest.permission.READ_EXTERNAL_STORAGE] permission. */
@@ -64,7 +52,8 @@ class EditNote : AppCompatActivity() {
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
                 if (null != selectedImageUri) {
-                    val path = getPathFromURI(selectedImageUri)
+                    //val path = getPathFromURI(selectedImageUri)
+                    notes_image.setTag(selectedImageUri.toString())
                     notes_image.setImageURI(selectedImageUri)
                 }
                 /*notes_image.setTag(uri.toString())
@@ -209,8 +198,10 @@ class EditNote : AppCompatActivity() {
     }
 
     private fun showImages(imageUri: Uri) {
-        val path = File(imageUri.toString())
-        val fname = path.name
+
+
+        val doc = imageUri.lastPathSegment?.split(":")
+        val docId = doc?.get(doc.lastIndex)
 
         val uriExternal: Uri = // MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -225,7 +216,7 @@ class EditNote : AppCompatActivity() {
             uriExternal,
             projection,
             "${MediaStore.Images.Media._ID} = ?",
-            arrayOf("31"),
+            arrayOf(docId),
             null
         )
         cur?.use { cursor ->
@@ -246,14 +237,6 @@ class EditNote : AppCompatActivity() {
         }
 
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            contentObserver = getApplication().contentResolver.loadThumbnail(imageUri)
-            Glide.with(this)
-                .load()
-                .thumbnail(0.33f)
-                .centerCrop()
-                .into(notes_image)
-        }*/
 
 
     }
@@ -289,17 +272,4 @@ class EditNote : AppCompatActivity() {
         }
     }
 
-    private fun getPathFromURI(uri: Uri?): String {
-        var path = ""
-        if (contentResolver != null) {
-            val cursor = contentResolver.query(uri!!, null, null, null, null)
-            if (cursor != null) {
-                cursor.moveToFirst()
-                val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME)
-                path = cursor.getString(idx)
-                cursor.close()
-            }
-        }
-        return path
-    }
 }
