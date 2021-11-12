@@ -1,21 +1,26 @@
 package com.example.notesdemo.adapters
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.notesdemo.R
 import com.example.notesdemo.extensions.humanizeDiff
 import com.example.notesdemo.model.Notes
+import com.example.notesdemo.utils.showImagesThumb
+import kotlinx.android.synthetic.main.activity_edit_note.*
 import kotlinx.android.synthetic.main.notes_list_item.view.*
 import java.util.*
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     private var notesList = mutableListOf<Notes>()
 
-    private var listener:((Notes)-> Unit)?=null
+    private var listener: ((Notes) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setNotes(notes: List<Notes>) {
@@ -33,8 +38,18 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = notesList[position]
         holder.itemName.text = note.noteName
-        holder.itemDate.text = note.createDate.humanizeDiff(Date())// .toString()
+        holder.itemDate.text = if (note.modifiedDate != null)
+            note.modifiedDate!!.humanizeDiff(Date())
+        else
+            note.createDate.humanizeDiff(Date())
         holder.itemText.text = note.noteText
+
+        val imageUri = showImagesThumb(holder.image.context, note.image!!.toUri())
+        Glide.with(holder.image.context)
+            .load(imageUri)
+            .thumbnail(0.33f)
+            .centerCrop()
+            .into(holder.image)
 
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
@@ -42,7 +57,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     }
 
-    fun setOnNoteTapListener(listener:((Notes)->Unit)){
+    fun setOnNoteTapListener(listener: ((Notes) -> Unit)) {
         this.listener = listener
     }
 
