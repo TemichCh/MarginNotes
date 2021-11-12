@@ -45,24 +45,19 @@ class EditNote : AppCompatActivity() {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
-    var resultLauncher =
+    private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                // There are no request codes
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
                 if (null != selectedImageUri) {
-                    //val path = getPathFromURI(selectedImageUri)
                     notes_image.setTag(selectedImageUri.toString())
                     notes_image.setImageURI(selectedImageUri)
                 }
-                /*notes_image.setTag(uri.toString())
-                notes_image.setImageURI(uri)
-                */
             }
         }
 
-    @RequiresApi(Build.VERSION_CODES.P)
+//    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
@@ -74,33 +69,18 @@ class EditNote : AppCompatActivity() {
             notes_text.setText(it.noteText)
             if (it.image != null) {
                 openMediaStore()
-                //showImages(it.image!!.toUri())
             }
-            /*notes_image.setImageURI(null)
-            //val file = File(it.image)
-            if (it.image !=null){
-               val contentResolver = getContentResolver()
-                 contentResolver.persistedUriPermissions.add(UriPermission. FLAG_GRANT_READ_URI_PERMISSION)
-                val imgSrc = ImageDecoder.createSource(contentResolver, it.image!!.toUri())
-                val img = ImageDecoder.decodeBitmap(imgSrc)
-                notes_image.setImageBitmap(img)
-            }
-*/
         } ?: kotlin.run {
 
         }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
     }
 
-    //Adds menu itmes to right upmenu with 3 dots ... not what i want
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_menu, menu)
-        return true//super.onCreateOptionsMenu(menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -125,8 +105,9 @@ class EditNote : AppCompatActivity() {
                     image = notes_image.getTag().toString(),
                     modifiedDate = Date()
                 )
+                //currentNote =
+                notesVModel.update(newNote)
                 currentNote = newNote
-                notesVModel.update(currentNote!!)
                 Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
             }
             true
@@ -142,11 +123,7 @@ class EditNote : AppCompatActivity() {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-            }
             resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
-
             true
         }
         else -> {
@@ -198,12 +175,10 @@ class EditNote : AppCompatActivity() {
     }
 
     private fun showImages(imageUri: Uri) {
-
-
         val doc = imageUri.lastPathSegment?.split(":")
         val docId = doc?.get(doc.lastIndex)
 
-        val uriExternal: Uri = // MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val uriExternal: Uri =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(
                     MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -235,17 +210,13 @@ class EditNote : AppCompatActivity() {
                     .into(notes_image)
             }
         }
-
-
-
-
     }
 
     /**
      * Convenience method to check if [Manifest.permission.READ_EXTERNAL_STORAGE] permission
      * has been granted to the app.
      */
-    fun haveStoragePermission() =
+    private fun haveStoragePermission(): Boolean =
         ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -254,7 +225,7 @@ class EditNote : AppCompatActivity() {
     /**
      * Convenience method to request [Manifest.permission.READ_EXTERNAL_STORAGE] permission.
      */
-    fun requestPermission() {
+    private fun requestPermission() {
         if (!haveStoragePermission()) {
             val permissions = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -264,7 +235,7 @@ class EditNote : AppCompatActivity() {
         }
     }
 
-    fun openMediaStore() {
+    private fun openMediaStore() {
         if (haveStoragePermission()) {
             showImages(currentNote?.image!!.toUri())
         } else {
