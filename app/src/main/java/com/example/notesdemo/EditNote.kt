@@ -2,18 +2,14 @@ package com.example.notesdemo
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,6 +17,7 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.example.notesdemo.model.Notes
+import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import kotlinx.android.synthetic.main.activity_edit_note.*
@@ -39,7 +36,7 @@ private const val DELETE_PERMISSION_REQUEST = 0x1033
 class EditNote : AppCompatActivity() {
 
     private var currentNote: Notes? = null
-    //private var contentObserver: ContentObserver? = null
+    /* private var contentObserver: ContentObserver? = null */
 
     private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
@@ -144,7 +141,7 @@ class EditNote : AppCompatActivity() {
             READ_EXTERNAL_STORAGE_REQUEST -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
-                    showImages(currentNote?.image!!.toUri())
+                    showImages()
                 } else {
                     // If we weren't granted the permission, check to see if we should show
                     // rationale for the permission.
@@ -174,43 +171,7 @@ class EditNote : AppCompatActivity() {
         }
     }
 
-    private fun showImages(imageUri: Uri) {
-        val doc = imageUri.lastPathSegment?.split(":")
-        val docId = doc?.get(doc.lastIndex)
 
-        val uriExternal: Uri =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(
-                    MediaStore.VOLUME_EXTERNAL_PRIMARY
-                )
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
-        val projection = arrayOf(MediaStore.Images.Media._ID)
-        val cur = contentResolver.query(
-            uriExternal,
-            projection,
-            "${MediaStore.Images.Media._ID} = ?",
-            arrayOf(docId),
-            null
-        )
-        cur?.use { cursor ->
-            if (cursor.moveToNext()) {
-                val thumbColumn: Int =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-                val _thumpId: Int = cursor.getInt(thumbColumn)
-                val imageUri_t = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    _thumpId.toLong()
-                )
-                Glide.with(this)
-                    .load(imageUri_t)
-                    .thumbnail(0.33f)
-                    .centerCrop()
-                    .into(notes_image)
-            }
-        }
-    }
 
     /**
      * Convenience method to check if [Manifest.permission.READ_EXTERNAL_STORAGE] permission
@@ -237,10 +198,18 @@ class EditNote : AppCompatActivity() {
 
     private fun openMediaStore() {
         if (haveStoragePermission()) {
-            showImages(currentNote?.image!!.toUri())
+            showImages()
         } else {
             requestPermission()
         }
     }
 
+    private fun showImages(){
+        val imageUri = showImagesThumb(context = this.baseContext,currentNote?.image!!.toUri())
+        Glide.with(this)
+            .load(imageUri)
+            .thumbnail(0.33f)
+            .centerCrop()
+            .into(notes_image)
+    }
 }
