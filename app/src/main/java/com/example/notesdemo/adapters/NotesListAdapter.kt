@@ -1,6 +1,7 @@
 package com.example.notesdemo.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         val note = notesList[position]
         holder.itemName.text = note.noteName
         holder.itemDate.text = note.createDate.humanizeDiff(Date())// .toString()
-        holder.itemText.text = note.image.toString()//note.noteText
+        holder.itemText.text = note.noteText
 
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
