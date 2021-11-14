@@ -44,13 +44,15 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
             note.createDate.humanizeDiff(Date())
         holder.itemText.text = note.noteText
 
-        val imageUri = showImagesThumb(holder.image.context, note.image!!.toUri())
-        Glide.with(holder.image.context)
-            .load(imageUri)
-            .thumbnail(0.33f)
-            .centerCrop()
-            .into(holder.image)
+        if (note.image != null) {
+            val imageUri = showImagesThumb(holder.image.context, note.image!!.toUri())
 
+            Glide.with(holder.image.context)
+                .load(imageUri)
+                .thumbnail(0.33f)
+                .centerCrop()
+                .into(holder.image)
+        }
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
         }
