@@ -104,9 +104,23 @@
         android:clickable="true"
         android:contentDescription="@string/fab_edit_addimage"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fab_edit_clear_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_image_search"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_edit_clear_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/spacing_normal_16"
+        android:clickable="true"
+        android:contentDescription="@string/fab_edit_clearimage"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_image_clear"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

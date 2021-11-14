@@ -9,4 +9,5 @@
     <string name="action_search">Найти</string>
     <string name="mnu_add_image">Добавить изображение</string>
     <string name="fab_edit_addimage">Добавить изображение</string>
+    <string name="fab_edit_clearimage">Очистить изображение</string>
 </resources>

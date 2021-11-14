@@ -96,6 +96,12 @@ class EditNote : AppCompatActivity() {
             resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
         }
 
+        val fabClearImage = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
+        fabClearImage.setOnClickListener {
+            currentNote?.image = null
+            Glide.with(notes_image).clear(notes_image)
+        }
+
         initViews(savedInstanceState)
     }
 
@@ -273,8 +279,12 @@ class EditNote : AppCompatActivity() {
         }
 
         //val tb =   findViewById<Toolbar>(R.id.toolbar_edit_note)
-        val fabImage = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
-        fabImage.isVisible = isEdit
+        val fabImageAdd = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        fabImageAdd.isVisible = isEdit
+
+        val fabImageClear = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
+        fabImageClear.isVisible = (isEdit && currentNote?.image !=null)
+
 
         val btn = toolbar_edit_note.menu?.findItem(R.id.menu_save)
         if (btn != null)
