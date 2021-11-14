@@ -20,11 +20,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_edit_note.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -85,6 +87,15 @@ class EditNote : AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val fabAddImage = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        fabAddImage.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
+        }
+
         initViews(savedInstanceState)
     }
 
@@ -110,13 +121,6 @@ class EditNote : AppCompatActivity() {
                 true
             } else false
 
-        }
-        R.id.menu_addimage -> {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
-            true
         }
         else -> {
             // If we got here, the user's action was not recognized.
@@ -269,6 +273,9 @@ class EditNote : AppCompatActivity() {
         }
 
         //val tb =   findViewById<Toolbar>(R.id.toolbar_edit_note)
+        val fabImage = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        fabImage.isVisible = isEdit
+
         val btn = toolbar_edit_note.menu?.findItem(R.id.menu_save)
         if (btn != null)
             with(btn) {
