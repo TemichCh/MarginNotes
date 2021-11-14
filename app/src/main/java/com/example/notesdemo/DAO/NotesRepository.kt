@@ -11,7 +11,6 @@ class NotesRepository(private val db: NotesDao) {
 
     val allNotes:Flow<MutableList<Notes>> = db.gelAllNotes()
 
-
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insertNote(note:Notes){
@@ -26,5 +25,7 @@ class NotesRepository(private val db: NotesDao) {
     suspend fun updateNote(note: Notes) {
         db.updateNote(note)
     }
+
+    fun searchNotes(text:String):Flow<MutableList<Notes>> = db.searchNotes(text)
 
 }

@@ -17,4 +17,7 @@ interface NotesDao {
 
     @Delete
     suspend fun deleteNote(note: Notes)
+
+    @Query("Select * from notes where noteName like '%' || :search || '%'")
+    fun searchNotes(search:String): Flow<MutableList<Notes>>
 }

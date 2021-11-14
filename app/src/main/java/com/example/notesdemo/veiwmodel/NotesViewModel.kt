@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
 
-    val allNotes: LiveData<MutableList<Notes>> = notesRep.allNotes.asLiveData()
+    val allNotes : LiveData<MutableList<Notes>> = notesRep.allNotes.asLiveData()
 
     fun insert(note: Notes) = viewModelScope.launch {
         notesRep.insertNote(note)
@@ -19,6 +19,10 @@ class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
 
     fun update(note: Notes) = viewModelScope.launch {
         notesRep.updateNote(note)
+    }
+
+    fun handleSearchQuery(text : String ) = viewModelScope.launch {
+        notesRep.searchNotes(text)
     }
 }
     class NotesViewModelFactory(private val notesRep: NotesRepository):ViewModelProvider.Factory{
