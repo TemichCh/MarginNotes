@@ -1,12 +1,17 @@
 package com.example.notesdemo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -21,6 +26,7 @@ import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import kotlinx.android.synthetic.main.activity_edit_note.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
@@ -35,8 +41,14 @@ private const val DELETE_PERMISSION_REQUEST = 0x1033
 
 class EditNote : AppCompatActivity() {
 
+    companion object {
+        const val IS_EDITE_MODE = "IS_EDITE_MODE"
+    }
+
     private var currentNote: Notes? = null
-    /* private var contentObserver: ContentObserver? = null */
+
+    var isEditMode = false
+    lateinit var viewFields: Map<String, TextView>
 
     private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
@@ -54,7 +66,7 @@ class EditNote : AppCompatActivity() {
             }
         }
 
-//    @RequiresApi(Build.VERSION_CODES.P)
+    //    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
@@ -73,39 +85,22 @@ class EditNote : AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        initViews(savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_menu, menu)
+        showCurrentMode(isEditMode)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
-
-            if (currentNote == null) {
-                val newNote = Notes(
-                    noteName = notes_name.text.toString(),
-                    noteText = notes_text.text.toString(),
-                    image = notes_image.getTag().toString(),
-                    createDate = Date()
-                )
-                notesVModel.insert(newNote)
-                currentNote = newNote
-                Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
+            if (isEditMode) {
+                InsertUpdateNote()
             } else {
-                val newNote = Notes(
-                    noteId = currentNote!!.noteId,
-                    noteName = notes_name.text.toString(),
-                    noteText = notes_text.text.toString(),
-                    createDate = currentNote!!.createDate,
-                    image = notes_image.getTag().toString(),
-                    modifiedDate = Date()
-                )
-                //currentNote =
-                notesVModel.update(newNote)
-                currentNote = newNote
-                Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
+                isEditMode = !isEditMode
+                showCurrentMode(isEditMode)
             }
             true
         }
@@ -129,6 +124,40 @@ class EditNote : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(IS_EDITE_MODE, isEditMode)
+    }
+
+    private fun InsertUpdateNote() {
+        if (currentNote == null) {
+            val newNote = Notes(
+                noteName = notes_name.text.toString(),
+                noteText = notes_text.text.toString(),
+                image = if (notes_image.tag != null)
+                    notes_image.getTag().toString()
+                else null,
+                createDate = Date()
+            )
+            notesVModel.insert(newNote)
+            currentNote = newNote
+            Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
+        } else {
+            if (currentNote != null) {
+                currentNote.also {
+                    it!!.noteName = notes_name.text.toString()
+                    it.noteText = notes_text.text.toString()
+                    it.createDate = currentNote!!.createDate
+                    if (notes_image.tag != null)
+                        it.image = notes_image.getTag().toString()
+                    it.modifiedDate = Date()
+                }
+                notesVModel.update(currentNote!!)
+                Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -172,12 +201,12 @@ class EditNote : AppCompatActivity() {
     }
 
 
-
     /**
      * Convenience method to check if [Manifest.permission.READ_EXTERNAL_STORAGE] permission
      * has been granted to the app.
      */
-    private fun haveStoragePermission(): Boolean =
+    private fun haveStoragePermission()
+            : Boolean =
         ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -204,12 +233,62 @@ class EditNote : AppCompatActivity() {
         }
     }
 
-    private fun showImages(){
-        val imageUri = showImagesThumb(context = this.baseContext,currentNote?.image!!.toUri())
-        Glide.with(this)
-            .load(imageUri)
-            .thumbnail(0.33f)
-            .centerCrop()
-            .into(notes_image)
+    private fun showImages() {
+        if (currentNote?.image != null) {
+            val imageUri = showImagesThumb(context = this.baseContext, currentNote?.image!!.toUri())
+            notes_image.tag = imageUri.toString()
+            Glide.with(this)
+                .load(imageUri)
+                .thumbnail(0.33f)
+                .centerCrop()
+                .into(notes_image)
+        }
+    }
+
+    private fun initViews(savedInstanceState: Bundle?) {
+        viewFields = mapOf(
+            "noteName" to notes_name,
+            "noteText" to notes_text
+        )
+        isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: false
+        Log.d("M_EditNote", "initViews=$isEditMode")
+        showCurrentMode(isEditMode)
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun showCurrentMode(isEdit: Boolean) {
+
+        val info =
+            viewFields
+        for ((_, v) in info) {
+            v as EditText
+            v.isFocusable = isEdit
+            v.isFocusableInTouchMode = isEdit
+            v.isEnabled = isEdit
+            v.background.alpha = if (isEdit) 255 else 0
+        }
+
+        //val tb =   findViewById<Toolbar>(R.id.toolbar_edit_note)
+        val btn = toolbar_edit_note.menu?.findItem(R.id.menu_save)
+        if (btn != null)
+            with(btn) {
+                val icon =
+                    //TODO("VERSION.SDK_INT < LOLLIPOP")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (isEdit)
+                            resources.getDrawable(R.drawable.ic_outline_done_24, theme)
+                        else resources.getDrawable(R.drawable.ic_outline_edit_24, theme)
+
+                    } else {
+                        if (!isEdit) ContextCompat.getDrawable(
+                            this@EditNote,
+                            R.drawable.ic_outline_edit_24
+                        )
+                        else
+                            ContextCompat.getDrawable(this@EditNote, R.drawable.ic_outline_done_24)
+                    }
+                setIcon(icon)
+            }
+
     }
 }
