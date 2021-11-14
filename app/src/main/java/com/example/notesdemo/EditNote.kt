@@ -115,18 +115,28 @@ class EditNote : AppCompatActivity() {
         R.id.menu_save -> {
             if (isEditMode) {
                 InsertUpdateNote()
-            } else {
-                isEditMode = !isEditMode
-                showCurrentMode(isEditMode)
             }
+            isEditMode = !isEditMode
+            showCurrentMode(isEditMode)
             true
         }
         R.id.menu_delete -> {
-            if (currentNote != null) {
-                notesVModel.delete(currentNote!!)
-                true
-            } else false
-
+            if (isEditMode) {
+                currentNote?.let {
+                    notes_name.setText(it.noteName)
+                    notes_text.setText(it.noteText)
+                    if (it.image != null) {
+                        openMediaStore()
+                    }
+                } ?: kotlin.run {
+                }
+            } else
+                if (currentNote != null) {
+                    notesVModel.delete(currentNote!!)
+                }
+            isEditMode = !isEditMode
+            showCurrentMode(isEditMode)
+            true
         }
         else -> {
             // If we got here, the user's action was not recognized.
@@ -283,12 +293,12 @@ class EditNote : AppCompatActivity() {
         fabImageAdd.isVisible = isEdit
 
         val fabImageClear = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
-        fabImageClear.isVisible = (isEdit && currentNote?.image !=null)
+        fabImageClear.isVisible = (isEdit && currentNote?.image != null)
 
 
-        val btn = toolbar_edit_note.menu?.findItem(R.id.menu_save)
-        if (btn != null)
-            with(btn) {
+        val btnEdit = toolbar_edit_note.menu?.findItem(R.id.menu_save)
+        if (btnEdit != null)
+            with(btnEdit) {
                 val icon =
                     //TODO("VERSION.SDK_INT < LOLLIPOP")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -303,6 +313,30 @@ class EditNote : AppCompatActivity() {
                         )
                         else
                             ContextCompat.getDrawable(this@EditNote, R.drawable.ic_outline_done_24)
+                    }
+                setIcon(icon)
+            }
+
+        val btnDel = toolbar_edit_note.menu?.findItem(R.id.menu_delete)
+        if (btnDel != null)
+            with(btnDel) {
+                val icon =
+                    //TODO("VERSION.SDK_INT < LOLLIPOP")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (isEdit)
+                            resources.getDrawable(R.drawable.ic_outline_cancel_24, theme)
+                        else resources.getDrawable(R.drawable.ic_outline_delete_24, theme)
+
+                    } else {
+                        if (!isEdit) ContextCompat.getDrawable(
+                            this@EditNote,
+                            R.drawable.ic_outline_cancel_24
+                        )
+                        else
+                            ContextCompat.getDrawable(
+                                this@EditNote,
+                                R.drawable.ic_outline_delete_24
+                            )
                     }
                 setIcon(icon)
             }
