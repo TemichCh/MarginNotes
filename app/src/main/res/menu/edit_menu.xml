@@ -16,7 +16,7 @@
         />
     <item
         android:id="@+id/menu_delete"
-        android:icon="@android:drawable/ic_delete"
+        android:icon="@drawable/ic_outline_delete_24"
         android:title="@string/btn_del_note"
         app:showAsAction="ifRoom"
         />
