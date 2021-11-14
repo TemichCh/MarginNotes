@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(main_activity_toolbar)
 
         val adapter = NotesListAdapter()
         recyclerview_notes.layoutManager = LinearLayoutManager(this)
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        val fab = findViewById<FloatingActionButton>(R.id.fab_main_add_note)
         fab.setOnClickListener {
             val intent = Intent(this@MainActivity, EditNote::class.java)
             startActivity(intent)
