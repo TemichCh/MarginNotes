@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-@Entity(tableName = "Notes")
+@Entity(tableName = "Notes",ignoredColumns = ["isSelected"])
 @Parcelize
 data class Notes(
     @PrimaryKey(autoGenerate = true)
@@ -16,5 +16,6 @@ data class Notes(
     var noteText: String,
     var image: String? = null, //TODO: media.Image может быть заменить на путь к файлу локально
     var createDate: Date,
-    var modifiedDate: Date? = null
+    var modifiedDate: Date? = null,
+    var isSelected:Boolean = false
 ) : Parcelable
