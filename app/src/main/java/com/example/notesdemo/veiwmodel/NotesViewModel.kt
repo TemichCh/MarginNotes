@@ -5,9 +5,16 @@ import com.example.notesdemo.DAO.NotesRepository
 import com.example.notesdemo.model.Notes
 import kotlinx.coroutines.launch
 
-class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
+class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
 
-    val allNotes : LiveData<MutableList<Notes>> = notesRep.allNotes.asLiveData()
+    private val searchQuery = MutableLiveData<String>("")
+
+    val allNotes: LiveData<MutableList<Notes>> =
+        Transformations.switchMap(searchQuery) { searchText ->
+            if (searchText.isNullOrEmpty())
+                notesRep.allNotes.asLiveData()
+            else notesRep.searchNotes(searchText).asLiveData()
+        }
 
     fun insert(note: Notes) = viewModelScope.launch {
         notesRep.insertNote(note)
@@ -21,16 +28,17 @@ class NotesViewModel(private val notesRep: NotesRepository): ViewModel() {
         notesRep.updateNote(note)
     }
 
-    fun handleSearchQuery(text : String ) = viewModelScope.launch {
-        notesRep.searchNotes(text)
+    fun handleSearchQuery(text: String) = viewModelScope.launch {
+        searchQuery.value = text
     }
 }
-    class NotesViewModelFactory(private val notesRep: NotesRepository):ViewModelProvider.Factory{
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NotesViewModel::class.java)){
-                @Suppress("UNCHECKED_CAST")
-                return NotesViewModel(notesRep) as T
-            }
-            throw IllegalArgumentException("Unknown VieModel Class")
+
+class NotesViewModelFactory(private val notesRep: NotesRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(NotesViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return NotesViewModel(notesRep) as T
         }
+        throw IllegalArgumentException("Unknown VieModel Class")
     }
+}
