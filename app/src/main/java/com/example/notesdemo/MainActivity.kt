@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         val fab = findViewById<FloatingActionButton>(R.id.fab_main_add_note)
         fab.setOnClickListener {
             val intent = Intent(this@MainActivity, EditNote::class.java)
+            intent.putExtra("isEdit",true)
             startActivity(intent)
         }
     }

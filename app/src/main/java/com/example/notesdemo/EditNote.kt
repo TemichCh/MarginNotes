@@ -43,6 +43,8 @@ private const val DELETE_PERMISSION_REQUEST = 0x1033
 
 class EditNote : AppCompatActivity() {
 
+    lateinit var viewFields: Map<String, TextView>
+
     companion object {
         const val IS_EDITE_MODE = "IS_EDITE_MODE"
     }
@@ -50,7 +52,7 @@ class EditNote : AppCompatActivity() {
     private var currentNote: Notes? = null
 
     var isEditMode = false
-    lateinit var viewFields: Map<String, TextView>
+
 
     private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
@@ -74,6 +76,12 @@ class EditNote : AppCompatActivity() {
         setContentView(R.layout.activity_edit_note)
 
         intent.getParcelableExtra<Notes>("note").also { currentNote = it }
+        isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
+            "isEdit",
+            false
+        )
+        initViews()
+
 
         currentNote?.let {
             notes_name.setText(it.noteName)
@@ -102,7 +110,7 @@ class EditNote : AppCompatActivity() {
             Glide.with(notes_image).clear(notes_image)
         }
 
-        initViews(savedInstanceState)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -265,12 +273,11 @@ class EditNote : AppCompatActivity() {
         }
     }
 
-    private fun initViews(savedInstanceState: Bundle?) {
+    private fun initViews() {
         viewFields = mapOf(
             "noteName" to notes_name,
             "noteText" to notes_text
         )
-        isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: false
         Log.d("M_EditNote", "initViews=$isEditMode")
         showCurrentMode(isEditMode)
     }
