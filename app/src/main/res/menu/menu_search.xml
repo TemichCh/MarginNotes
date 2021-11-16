@@ -4,9 +4,17 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:icon="@drawable/ic_outline_search_24"
         android:title="@string/action_search"
         app:actionLayout="@layout/search_view_layout"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_outline_delete_24"
+        android:title="@string/btn_del_note"
+        android:visible="false"
         app:showAsAction="ifRoom|collapseActionView"
+
         />
 </menu>
