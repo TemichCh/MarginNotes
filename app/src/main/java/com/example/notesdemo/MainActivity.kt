@@ -3,6 +3,7 @@ package com.example.notesdemo
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,6 +16,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var deleteItem: MenuItem
+    private lateinit var searchItem: MenuItem
 
     val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
@@ -75,7 +79,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
-        val searchItem = menu.findItem(R.id.action_search)
+        deleteItem = menu.findItem(R.id.action_delete)
+        //val deleteView = deleteItem?.actionView as androidx.appcompat.widget.AppCompatTextView
+        searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
         searchView.queryHint = "Введите наименование для поиска"
         searchView.setOnQueryTextListener(object :
@@ -104,12 +110,50 @@ class MainActivity : AppCompatActivity() {
         if (adapter.notesList.none { note ->
                 note.selected
             }) {
-            //setDefaultToolbar()
+            setDefaultToolbar()
             selectionModeEnabled = false
         } else {
-            //setDeleteToolBar()
+            setDeleteToolBar()
         }
     }
 
+    private fun setDefaultToolbar() {
+        title = resources.getString(R.string.app_name)
+        deleteItem.isVisible = false
+        searchItem.isVisible = true
+        supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+    }
+
+    private fun setDeleteToolBar() {
+        title = adapter.getSelectedList().size.toString()
+        deleteItem.isVisible = true
+        searchItem.isVisible = false
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun deselectAllProducts() {
+        adapter.notesList.forEachIndexed { position, note ->
+            if (note.selected) {
+                val index = adapter.notesList.indexOf(note)
+                note.selected = false
+                adapter.notifyItemChanged(index)
+            }
+        }
+        setDefaultToolbar()
+        selectionModeEnabled = false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> {
+            deselectAllProducts()
+            true
+        }
+        R.id.action_delete -> {
+            //TODO
+            true
+        }
+        else ->
+            super.onOptionsItemSelected(item)
+    }
 
 }
