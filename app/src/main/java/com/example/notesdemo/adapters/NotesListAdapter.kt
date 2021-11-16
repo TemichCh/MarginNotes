@@ -83,6 +83,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         return notesList.size
     }
 
+    fun getSelectedList() = notesList.filter { note -> note.selected }
 
 }
 
