@@ -1,8 +1,7 @@
 package com.example.notesdemo.adapters
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +17,11 @@ import kotlinx.android.synthetic.main.notes_list_item.view.*
 import java.util.*
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
-    private var notesList = mutableListOf<Notes>()
+    var notesList = mutableListOf<Notes>()
 
-    private var listener: ((Notes) -> Unit)? = null
+    var listener: ((Notes) -> Unit)? = null
+
+    var longListener: ((Notes) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setNotes(notes: List<Notes>) {
@@ -35,6 +36,8 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     }
 
+
+    @SuppressLint("ResourceType")
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = notesList[position]
         holder.itemName.text = note.noteName
@@ -53,14 +56,27 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
                 .centerCrop()
                 .into(holder.image)
         }
+
+        holder.itemView.setBackgroundColor(if (note.selected) Color.GREEN else Color.TRANSPARENT)
+
         holder.itemView.setOnClickListener {
             listener?.invoke(notesList[position])
         }
 
+        holder.itemView.setOnLongClickListener {
+            longListener?.invoke(notesList[position])
+            return@setOnLongClickListener true
+        }
+
     }
+
 
     fun setOnNoteTapListener(listener: ((Notes) -> Unit)) {
         this.listener = listener
+    }
+
+    fun onNoteLongClickListener(listener: (Notes) -> Unit){
+        this.longListener =listener
     }
 
     override fun getItemCount(): Int {
@@ -77,3 +93,5 @@ class NotesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val itemText = view.list_item_text
     val image = view.iv_has_image
 }
+
+

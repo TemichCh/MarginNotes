@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
+import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,6 +20,9 @@ class MainActivity : AppCompatActivity() {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
+    private var selectionModeEnabled = false
+    val adapter = NotesListAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -26,15 +30,25 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(main_activity_toolbar)
 
-        val adapter = NotesListAdapter()
+
         recyclerview_notes.layoutManager = LinearLayoutManager(this)
         recyclerview_notes.adapter = adapter
 
-        adapter.setOnNoteTapListener{ note ->
-            val intent = Intent(this@MainActivity, EditNote::class.java)
-            intent.putExtra("note", note)
-            startActivity(intent)
+        adapter.setOnNoteTapListener { note ->
+            if (!selectionModeEnabled) {
+                val intent = Intent(this@MainActivity, EditNote::class.java)
+                intent.putExtra("note", note)
+                startActivity(intent)
+            } else {
+                startSelection(note)
+            }
         }
+
+        adapter.onNoteLongClickListener { note ->
+            selectionModeEnabled = true
+            startSelection(note)
+        }
+
 
         //allNotes
         notesVModel.allNotes.observe(this) { notes ->
@@ -64,7 +78,8 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as androidx.appcompat.widget.SearchView
         searchView.queryHint = "Введите наименование для поиска"
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 notesVModel.handleSearchQuery(query)
@@ -79,6 +94,21 @@ class MainActivity : AppCompatActivity() {
 
         })
         return true//super.onCreateOptionsMenu(menu)
+    }
+
+
+    private fun startSelection(note: Notes) {
+        note.selected = !note.selected
+        val index = adapter.notesList.indexOf(note)
+        adapter.notifyItemChanged(index);
+        if (adapter.notesList.none { note ->
+                note.selected
+            }) {
+            //setDefaultToolbar()
+            selectionModeEnabled = false
+        } else {
+            //setDeleteToolBar()
+        }
     }
 
 
