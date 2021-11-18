@@ -11,7 +11,7 @@ import java.util.*
 @Entity(tableName = "Notes")
 @Parcelize
 data class Notes(
-    @PrimaryKey(autoGenerate = true) var noteId: Int? = 0,
+    @PrimaryKey(autoGenerate = true) var noteId: Int?,
     var userId: String? = null, //на будущее для разделения по юзерам
     var noteName: String,
     var noteText: String,
@@ -19,7 +19,14 @@ data class Notes(
     var createDate: Date,
     var modifiedDate: Date? = null,
 
-    @Ignore var selected:Boolean = false
+    @Ignore var selected: Boolean = false
 ) : Parcelable {
-    constructor () : this(0,null,"","",null,Date(),null)
+    constructor (noteName: String, noteText: String, image: String?, createDate: Date) : this(
+        null,
+        null,
+        noteName = noteName,
+        noteText = noteText,
+        image = image,
+        createDate = createDate
+    )
 }
