@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NotesDemo</string>
+    <string name="app_name">Записки на полях</string>
     <string name="fab_main_name">Добавить заметку</string>
     <string name="text_view_name">Укажите наименование заметки</string>
     <string name="image_view_image">Изображение</string>
