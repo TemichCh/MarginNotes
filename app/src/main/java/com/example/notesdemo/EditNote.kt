@@ -123,11 +123,11 @@ class EditNote : AppCompatActivity() {
         R.id.menu_save -> {
             if (isEditMode) {
                 InsertUpdateNote()
-                isEditMode = !isEditMode
-                showCurrentMode(isEditMode)
+
                 finish()
             }
-
+            isEditMode = !isEditMode
+            showCurrentMode(isEditMode)
             true
         }
         R.id.menu_delete -> {
