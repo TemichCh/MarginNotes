@@ -64,22 +64,26 @@
                 style="@style/Profile.EditText.Multiline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_margin="@dimen/spacing_normal_16"
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="@string/multi_line_txt_desc"
                 android:imeActionLabel="@string/multi_line_txt_desc"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
-                android:minHeight="48dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notes_name"
-                tools:ignore="LabelFor" />
+                tools:ignore="LabelFor"
+                tools:text="
+            Перед Вами простое приложение для создания заметок.
+            Это могут быть различные записи которые Вы хотели бы сохранить в Вашем телефоне.
+            Записи могут содержать Заголовок, Текст и Изображение из Вашей галереи.
+            К сожаления т.к. это пока первая версия программы данные могут храниться только локально, на Вашем телефоне.
+            Если приложение получит поддержку и будет востребованно оно обзаведётся различными возможностями по хранению данных
+            и их переносу в сеть между Вашими устройствами.
+            Желаю приятной работы.
+            " />
 
             <ImageView
                 android:id="@+id/notes_image"

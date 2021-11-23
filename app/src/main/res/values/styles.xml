@@ -21,7 +21,7 @@
 
     <style name="Profile.EditText.Multiline" parent="Profile.EditText">
         <item name="android:inputType">textMultiLine</item>
-        <item name="android:maxLength">128</item>
+        <!--item name="android:maxLength">128</item-->
     </style>
 
     <style name="Profile.Header" parent="Profile">
