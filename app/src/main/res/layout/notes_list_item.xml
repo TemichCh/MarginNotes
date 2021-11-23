@@ -10,30 +10,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_size"
-    android:padding="@dimen/spacing_normal_16"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:padding="@dimen/spacing_small_8">
 
 
     <ImageView
         android:id="@+id/iv_has_image"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="@dimen/spacing_normal_16"
+        android:layout_width="@dimen/avatar_item_size"
+        android:layout_height="@dimen/avatar_item_size"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/spacing_small_8"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/list_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="11sp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:textColor="@color/color_gray_dark"
         android:layout_alignParentEnd="true"
-        tools:text="10:00"/>
+        android:layout_alignParentRight="true"
+        android:textColor="@color/color_gray_dark"
+        android:textSize="11sp"
+        tools:text="10:00" />
 
     <TextView
         android:id="@+id/list_item_name"
@@ -46,7 +46,7 @@
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/color_primary"
         android:textSize="14sp"
-        tools:text="title name"/>
+        tools:text="title name" />
 
     <TextView
         android:id="@+id/list_item_text"
@@ -57,6 +57,6 @@
         android:layout_toRightOf="@+id/iv_has_image"
         android:textColor="@color/color_gray_dark"
         android:textSize="14sp"
-        tools:text="text content"/>
-<!--/LinearLayout-->
+        tools:text="text content" />
+    <!--/LinearLayout-->
 </RelativeLayout>
