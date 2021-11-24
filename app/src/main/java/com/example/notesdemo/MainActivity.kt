@@ -1,11 +1,14 @@
 package com.example.notesdemo
 
+import android.app.ActivityOptions
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
@@ -13,6 +16,7 @@ import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,9 +44,14 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnNoteTapListener { note ->
             if (!selectionModeEnabled) {
+                val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
+                } else {
+                    ActivityOptionsCompat.makeCustomAnimation(this, 0, 0).toBundle()
+                }
                 val intent = Intent(this@MainActivity, EditNote::class.java)
                 intent.putExtra("note", note)
-                startActivity(intent)
+                startActivity(intent,bundle)
             } else {
                 startSelection(note)
             }
