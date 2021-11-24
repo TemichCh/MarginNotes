@@ -86,6 +86,7 @@
             " />
 
             <ImageView
+                android:transitionName="@string/transition_image_view"
                 android:id="@+id/notes_image"
                 android:layout_width="383dp"
                 android:layout_height="303dp"

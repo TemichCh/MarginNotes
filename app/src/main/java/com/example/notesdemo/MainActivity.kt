@@ -18,6 +18,7 @@ import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.notes_list_item.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         adapter.setOnNoteTapListener { note ->
             if (!selectionModeEnabled) {
                 val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
+                    ActivityOptions.makeSceneTransitionAnimation(this,iv_has_image,iv_has_image.transitionName).toBundle()
                 } else {
                     ActivityOptionsCompat.makeCustomAnimation(this, 0, 0).toBundle()
                 }

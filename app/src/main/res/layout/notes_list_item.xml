@@ -15,6 +15,7 @@
 
 
     <ImageView
+        android:transitionName="@string/transition_image_view"
         android:id="@+id/iv_has_image"
         android:layout_width="@dimen/avatar_item_size"
         android:layout_height="@dimen/avatar_item_size"
