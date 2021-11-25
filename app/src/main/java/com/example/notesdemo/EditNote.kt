@@ -35,11 +35,6 @@ import java.util.*
 /** The request code for requesting [Manifest.permission.READ_EXTERNAL_STORAGE] permission. */
 private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
 
-/**
- * Code used with [IntentSender] to request user permission to delete an image with scoped storage.
- */
-private const val DELETE_PERMISSION_REQUEST = 0x1033
-
 
 class EditNote : AppCompatActivity() {
 
@@ -174,19 +169,19 @@ class EditNote : AppCompatActivity() {
             )
             notesVModel.insert(newNote)
             currentNote = newNote
-            Toast.makeText(this, "Insert Note $newNote", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.insert_note, Toast.LENGTH_LONG).show()
         } else {
             if (currentNote != null) {
-                currentNote.also {
-                    it!!.noteName = notes_name.text.toString()
-                    it.noteText = notes_text.text.toString()
-                    it.createDate = currentNote!!.createDate
-                    if (notes_image.tag != null)
-                        it.image = notes_image.getTag().toString()
-                    it.modifiedDate = Date()
-                }
+                //currentNote.also { note ->
+                currentNote!!.noteName = notes_name.text.toString()
+                currentNote!!.noteText = notes_text.text.toString()
+                currentNote!!.createDate = currentNote!!.createDate
+                if (notes_image.tag != null)
+                    currentNote!!.image = notes_image.getTag().toString()
+                currentNote!!.modifiedDate = Date()
+                //}
                 notesVModel.update(currentNote!!)
-                Toast.makeText(this, "Update note", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.update_note, Toast.LENGTH_SHORT).show()
             }
         }
     }

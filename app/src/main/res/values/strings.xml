@@ -11,4 +11,6 @@
     <string name="fab_edit_addimage">Добавить изображение</string>
     <string name="fab_edit_clearimage">Очистить изображение</string>
     <string name="transition_image_view">TransitionImage</string>
+    <string name="insert_note">Добавляю заметку</string>
+    <string name="update_note">Записываем изменения</string>
 </resources>
