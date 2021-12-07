@@ -12,23 +12,36 @@ const val HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
 
 fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
+    // FIXME SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
+    //  особенно учитывая что эта функция будет вызываться при скролле recyclerview множество раз
+    //  в секунду то мы можем получить лаги. стоит использовать shared isntance - создать приватное
+    //  свойство в этом файле и там хранить объект созданный
     val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
     return dateFormat.format(this)
 }
 
 fun Date.shortFormat(): String {
     val pattern = if (this.isSameDay(Date())) "HH:mm" else "dd.MM.yy"
+    // FIXME SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
+    //  особенно учитывая что эта функция будет вызываться при скролле recyclerview множество раз
+    //  в секунду то мы можем получить лаги. стоит использовать shared isntance - создать приватное
+    //  свойство в этом файле и там хранить объект созданный
     val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
     return dateFormat.format(this)
 }
 
 fun Date.isSameDay(date: Date): Boolean {
+    // FIXME более надежно и без сайд эффектов - простое сравнение 3 компонентов
+    //  return this.year == date.year && this.month == date.month && this.day == date.day
+    //  а также чтобы не использовать Deprecated функционал лучше создать shared Calendar который
+    //  будет использоваться для сравнения
     val day1 = this.time / DAY
     val day2 = date.time / DAY
     return day1 == day2
 
 }
 
+// FIXME не используемая функция, убрать стоит :)
 fun Date.add(value: Int, units: TimeUnits): Date {
     var time = this.time
 
@@ -50,6 +63,9 @@ enum class TimeUnits {
     DAY
 }
 
+// FIXME тут сразу много зла - непонятные имена аргументов, непонятный тип результата, логика
+//  внутри сложна для понимания из-за кривых имен.
+//  и по факту это даже не нужная функция - нужно использовать plural'ы
 fun daysToString(l: Long, s: String, s1: String, s2: String): Any {
     val inL = abs(l) % 100
     val inL1 = l % 10
@@ -62,6 +78,11 @@ fun daysToString(l: Long, s: String, s1: String, s2: String): Any {
     }
 }
 
+// FIXME крайне переусложненная функция.
+//  нужно ее упростить с использованием plural'ов для слов типа "минуту, минуты, минут"
+//  https://developer.android.com/guide/topics/resources/string-resource
+//  и упростить принцип сборки итоговой строки - по сути разница "через" и "назад" только в суффиксе
+//  и постфиксе строки, а контент одинаковый внутри
 fun Date.humanizeDiff(date: Date = Date()): String {
     val thisTime = date.time
     val anotherTime = this.time

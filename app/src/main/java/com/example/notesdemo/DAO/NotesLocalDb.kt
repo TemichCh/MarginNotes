@@ -1,3 +1,4 @@
+// FIXME имя пакета не соответствует кодстайлу
 package com.example.notesdemo.DAO
 
 import android.content.Context
@@ -48,6 +49,8 @@ abstract class NotesLocalDb : RoomDatabase() {
 private class NotesItemsCallback(val scope: CoroutineScope) : RoomDatabase.Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
+        // FIXME лучше это выделить в отдельную функцию (приватную в этом классе)
+        //  createInitialNote(): Notes
         val initialNote = Notes(noteName = "Добро пожаловать!",noteText = """
             Перед Вами простое приложение для создания заметок.
             Это могут быть различные записи которые Вы хотели бы сохранить в Вашем телефоне.
@@ -57,8 +60,13 @@ private class NotesItemsCallback(val scope: CoroutineScope) : RoomDatabase.Callb
             и их переносу в сеть между Вашими устройствами.
             Желаю приятной работы.
         """.trimIndent(), null ,Date())
+        // FIXME выглядит хаком и ненадежно.
+        //  задача пред-заполнения базы данных решается иначе, хоть и не так удобно (без дао)
+        //  https://developer.android.com/training/data-storage/room/prepopulate
+        //  я бы поискал более надежное и аккуратно выглядящее решение для заполнения данными через dao
         Executors.newSingleThreadExecutor().execute {
             NotesLocalDb.INSTANCE?.let {
+                // FIXME тут должен использоваться или скоуп и корутины или потоки, а не всё вместе
                 scope.launch {
                     it.LocalNotesDao().InsertNote(initialNote)
                 }
