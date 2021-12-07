@@ -32,30 +32,47 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
+// FIXME имя константы не отражает суть. Константа сама имеет смысл и влияние только внутри класса
+//  активити, и должна быть занесена внутрь компаньен объекта данной активити
 /** The request code for requesting [Manifest.permission.READ_EXTERNAL_STORAGE] permission. */
 private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
 
-
+// FIXME нейминг надо поправить. тут как я вижу правдивое имя будет CreateOrEditNoteActivity
 class EditNote : AppCompatActivity() {
-
+    // FIXME не надо так сохранять никакие вьюхи. строковые константы вообще не надежная штука
     lateinit var viewFields: Map<String, TextView>
 
+    // FIXME не по кодстайлу - компаньены в самом конце идут
     companion object {
+        // FIXME ошибка в названии, а также эта константа должна быть приватная и не доступна для
+        //  использования из вне данной активности
         const val IS_EDITE_MODE = "IS_EDITE_MODE"
     }
 
+    // FIXME для активности все равно должно быть на объект заметки - активность должна просто выводить
+    //  все что скажет вьюмодель и ничего не додумывать, и не хранить в себе
     private var currentNote: Notes? = null
 
+    // FIXME это свойство не должно быть публичным. а также его можно вообще сделать не изменяемым,
+    //  вычисляемым через lazy, считывая значение из intent.
+    //  https://kotlinlang.org/docs/delegated-properties.html#lazy-properties
     var isEditMode = false
 
 
+    // FIXME тут нам нужно не вьюмодель списка а свою вьюмодель создания и редактирования, в которму
+    //  мы сразу в конструктор передаем id заметки из intent (случай редактирования) - эта вьюмодель
+    //  должна управлять логикой экрана
     private val notesVModel: NotesViewModel by viewModels {
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
+    // FIXME это точно не var - это val. и имя надо исправить у переменной - не информативное
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                // FIXME обработчик получения данных нужно в отдельную функцию выделить и
+                //  там реализовать всю логику по чтению изображения по полученному uri и сохранению
+                //  в данные приложения
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
                 if (null != selectedImageUri) {
@@ -70,14 +87,19 @@ class EditNote : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
 
+        // FIXME выше уже сказал что вместо этого надо получать id заметки и отдавать в вьюмодель
         intent.getParcelableExtra<Notes>("note").also { currentNote = it }
+        // FIXME нет смысла сохранять в инстанс отдельный флаг - интент он всегда доступен, даже
+        //  после пересоздания экрана - с него можно читать
         isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
             "isEdit",
             false
         )
         initViews()
 
-
+        // FIXME вместо выставления так данных - должна быть привязка к лайвдатам из вьюмодели,
+        //  вьюхи на активити должны быть тупыми и просто получают значения от вьюмодели. а та в
+        //  свою очередь получит все данные с бд и выставит в лайвдаты
         currentNote?.let {
             notes_name.setText(it.noteName)
             notes_text.setText(it.noteText)
@@ -85,22 +107,29 @@ class EditNote : AppCompatActivity() {
                 openMediaStore()
             }
         } ?: kotlin.run {
-
+            // FIXME бесполезный вызов run
         }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val fabAddImage = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
+        //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
         fabAddImage.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
+            // FIXME заголовок не хардкодить надо а с ресурсов читать
             resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
         }
 
         val fabClearImage = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
+        // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
+        //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
         fabClearImage.setOnClickListener {
+            // FIXME тут мы должны вызвать обработчик во вьюмодели, там очистится лайвдата и в свою
+            //  очередь сработает подписка ui на эту лайвдату и изображение уберется
             currentNote?.image = null
             Glide.with(notes_image).clear(notes_image)
         }
@@ -116,16 +145,20 @@ class EditNote : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
+            // FIXME должны просто оповещать вьюмодель, а она уже действовать
             if (isEditMode) {
                 InsertUpdateNote()
 
                 finish()
             }
+            // FIXME вроде тут нету логики переключения режимов же, или есть возможность включать
+            //  выключать редактирование?
             isEditMode = !isEditMode
             showCurrentMode(isEditMode)
             true
         }
         R.id.menu_delete -> {
+            // FIXME должны просто оповещать вьюмодель, а она уже действовать
             if (isEditMode) {
                 currentNote?.let {
                     notes_name.setText(it.noteName)
@@ -134,6 +167,7 @@ class EditNote : AppCompatActivity() {
                         openMediaStore()
                     }
                 } ?: kotlin.run {
+                    // FIXME зачем тут run?
                 }
             } else
                 if (currentNote != null) {
@@ -157,6 +191,8 @@ class EditNote : AppCompatActivity() {
         outState.putBoolean(IS_EDITE_MODE, isEditMode)
     }
 
+    // FIXME нейминг не по кодстайлу. и логика работы с бд это ответственность вьюмодели, не ui
+    //  должен все эти данные готовить
     private fun InsertUpdateNote() {
         if (currentNote == null) {
             val newNote = Notes(
@@ -186,6 +222,11 @@ class EditNote : AppCompatActivity() {
         }
     }
 
+    // FIXME вместо замут с запросом разрешения и добавления своего обработчика стоит использовать
+    //  современное API из Activity Result API
+    //  https://medium.com/@ajinkya.kolkhede1/requesting-runtime-permissions-using-new-activityresult-api-cb6116551f00
+    // TODO вообще эти разрешения даже не нужны если сделать сохранение изображений себе в файлы
+    //  так как приложения выдают uri с разрешением на чтение
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -196,8 +237,13 @@ class EditNote : AppCompatActivity() {
             READ_EXTERNAL_STORAGE_REQUEST -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
+                    // FIXME правильнее вызывать onReadStoragePermissionGranted - свой обработчик где
+                    //  уже делать какую-то логику, так будет понятнее когда и почему вызовется этот
+                    //  обработчик. а showImages будто где угодно можно вызывать и покажутся какието
+                    //  картинки
                     showImages()
                 } else {
+                    // FIXME обработку тут стоит доделать :)
                     // If we weren't granted the permission, check to see if we should show
                     // rationale for the permission.
                     val showRationale =
@@ -231,6 +277,7 @@ class EditNote : AppCompatActivity() {
      * Convenience method to check if [Manifest.permission.READ_EXTERNAL_STORAGE] permission
      * has been granted to the app.
      */
+    // FIXME страшно поехал весь код
     private fun haveStoragePermission()
             : Boolean =
         ContextCompat.checkSelfPermission(
@@ -242,11 +289,15 @@ class EditNote : AppCompatActivity() {
      * Convenience method to request [Manifest.permission.READ_EXTERNAL_STORAGE] permission.
      */
     private fun requestPermission() {
+        // FIXME лучше использовать ранний возврат - будет код чище
+        //  https://habr.com/ru/post/348074/
         if (!haveStoragePermission()) {
             val permissions = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
+            // FIXME юзать в таких случаях Activity Result API
+            //  https://medium.com/@ajinkya.kolkhede1/requesting-runtime-permissions-using-new-activityresult-api-cb6116551f00
             ActivityCompat.requestPermissions(this, permissions, READ_EXTERNAL_STORAGE_REQUEST)
         }
     }
@@ -259,6 +310,9 @@ class EditNote : AppCompatActivity() {
         }
     }
 
+    // FIXME я уже упоминал в других местах - надо читать чисто из своих файлов, те копии
+    //  изображений которые уже в локальное хранилище отправлены, тогда никаких проблем с доступами
+    //  и потерями добавленных изображений не будет
     private fun showImages() {
         if (currentNote?.image != null) {
             val imageUri = showImagesThumb(context = this.baseContext, currentNote?.image!!.toUri())
@@ -272,6 +326,7 @@ class EditNote : AppCompatActivity() {
     }
 
     private fun initViews() {
+        // FIXME очень странная и ненадежная логика с строковыми константами - не надо так, сломается
         viewFields = mapOf(
             "noteName" to notes_name,
             "noteText" to notes_text
@@ -282,7 +337,8 @@ class EditNote : AppCompatActivity() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun showCurrentMode(isEdit: Boolean) {
-
+        // FIXME кода будет подключен ViewBinding просто все нужные текст вью соберешь в listOf и
+        //  настроишь, без страшных мап
         val info =
             viewFields
         for ((_, v) in info) {
@@ -303,7 +359,9 @@ class EditNote : AppCompatActivity() {
 
         val btnEdit = toolbar_edit_note.menu?.findItem(R.id.menu_save)
         if (btnEdit != null)
+            // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
             with(btnEdit) {
+                // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
                 val icon =
                     //TODO("VERSION.SDK_INT < LOLLIPOP")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -324,7 +382,9 @@ class EditNote : AppCompatActivity() {
 
         val btnDel = toolbar_edit_note.menu?.findItem(R.id.menu_delete)
         if (btnDel != null)
+            // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
             with(btnDel) {
+                // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
                 val icon =
                     //TODO("VERSION.SDK_INT < LOLLIPOP")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
