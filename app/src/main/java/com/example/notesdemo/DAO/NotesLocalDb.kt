@@ -18,6 +18,7 @@ import java.util.concurrent.Executors
 @TypeConverters(Converters::class)
 abstract class NotesLocalDb : RoomDatabase() {
 
+    // FIXME нейминг невалидный - надо исправить в соответствии с кодстайлом kotlin
     abstract fun LocalNotesDao(): NotesDao
 
     companion object {

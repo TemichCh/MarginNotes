@@ -347,4 +347,15 @@ class EditNote : AppCompatActivity() {
             }
 
     }
+
+// пример как закрыть от внешнего доступа всю логику формирования intent'а по которому можно открыть экран
+//    companion object {
+//        private const val INTENT_EXTRA_NOTE = "note"
+//
+//        fun createIntent(context: Context, noteId: Int): Intent {
+//            val intent = Intent(context, EditNote::class.java)
+//            intent.putExtra(INTENT_EXTRA_NOTE, noteId)
+//            return intent
+//        }
+//    }
 }

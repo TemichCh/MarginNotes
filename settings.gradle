@@ -3,6 +3,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // FIXME стоит сразу выпилить jcenter чтобы не было никаких зависимостей с него гарантированно
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
