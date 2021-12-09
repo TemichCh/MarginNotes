@@ -3,6 +3,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    // FIXME андроид экстеншены уже deprecated - https://habr.com/ru/post/526192/ надо избавиться
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 
@@ -39,6 +40,10 @@ android {
 }
 
 dependencies {
+    // FIXME лучше сразу делать для всех зависимостей выделение версии, это упростит работу с
+    //  множеством зависимостей и даст централизованное версионирование
+    // TODO как задачка со звездочкой - подключить gradle version catalog и через него все зависимости указать
+    //  материалы тут - https://kmm.icerock.dev/learning/gradle/version-catalogs
     def roomVersion = "2.3.0"
     def lifecycleVersion = '2.4.0'
     def glide_version = "4.12.0"
@@ -58,6 +63,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //coroutines
+    // FIXME надо задуматься о вопросе - почему тут api а не implementation? материалы есть тут -
+    //  https://kmm.icerock.dev/learning/gradle/configuration
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
 

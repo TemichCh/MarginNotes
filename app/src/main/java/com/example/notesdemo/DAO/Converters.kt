@@ -1,8 +1,11 @@
+// FIXME имя пакета не соответствует кодстайлу
 package com.example.notesdemo.DAO
 
 import androidx.room.TypeConverter
 import java.util.*
 
+// FIXME это должен быть object - нам нет необходимости создавать объекты типа Converters
+//  https://kotlinlang.org/docs/object-declarations.html#object-declarations-overview
 class Converters {
     @TypeConverter
     fun fromTimestamp(value: Long?): Date? {
