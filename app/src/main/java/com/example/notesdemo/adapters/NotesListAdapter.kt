@@ -32,13 +32,9 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     //  менять содержимое списка, а не указывать другой список
     var notesList = mutableListOf<Notes>()
 
-    // FIXME более понятное имя надо. просто листенер это что угодно может быть.
-    //  тут же - itemClickListener
-    var listener: ((Notes) -> Unit)? = null
+    private var itemClickListener: ((Notes) -> Unit)? = null
 
-    // FIXME более понятное имя надо. просто листенер это что угодно может быть.
-    //  тут же - itemLongClickListener
-    var longListener: ((Notes) -> Unit)? = null
+    private var itemLongClickListener: ((Notes) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setNotes(notes: List<Notes>) {
@@ -95,11 +91,11 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         holder.itemView.setBackgroundColor(if (note.selected) Color.GREEN else Color.TRANSPARENT)
 
         holder.itemView.setOnClickListener {
-            listener?.invoke(notesList[position])
+            itemClickListener?.invoke(notesList[position])
         }
 
         holder.itemView.setOnLongClickListener {
-            longListener?.invoke(notesList[position])
+            itemLongClickListener?.invoke(notesList[position])
             return@setOnLongClickListener true
         }
 
@@ -109,13 +105,13 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
     fun setOnNoteTapListener(listener: ((Notes) -> Unit)) {
-        this.listener = listener
+        this.itemClickListener = listener
     }
 
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
     fun onNoteLongClickListener(listener: (Notes) -> Unit){
-        this.longListener =listener
+        this.itemLongClickListener =listener
     }
 
     override fun getItemCount(): Int {
