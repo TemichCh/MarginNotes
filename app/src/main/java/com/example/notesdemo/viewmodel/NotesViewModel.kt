@@ -1,5 +1,4 @@
-// FIXME не стоит оставлять явные ошибки в названиях
-package com.example.notesdemo.veiwmodel
+package com.example.notesdemo.viewmodel
 
 import androidx.lifecycle.*
 import com.example.notesdemo.DAO.NotesRepository
