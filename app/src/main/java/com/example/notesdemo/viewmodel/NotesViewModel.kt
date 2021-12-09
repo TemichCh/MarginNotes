@@ -8,16 +8,13 @@ import kotlinx.coroutines.launch
 class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     val searchQuery = MutableLiveData("")
 
-    // FIXME на выходе мы получать должны лайвдату с немутабельным списком.
-    val allNotes: LiveData<MutableList<Notes>> =
+    val allNotes: LiveData<List<Notes>> =
         Transformations.switchMap(searchQuery) { searchText ->
-            // FIXME условия без фигурных скобок допускаются только если в одну строку влезают.
-            //  как только на следующую строку уходят - надо ставить скобки чтобы обезопасить себя
-            //  от ошибок когда добавишь какую либо строку / логгер или еще чего и логика условия
-            //  подействует не на то выражение
-            if (searchText.isNullOrEmpty())
+            if (searchText.isNullOrEmpty()) {
                 notesRep.allNotes.asLiveData()
-            else notesRep.searchNotes(searchText).asLiveData()
+            } else {
+                notesRep.searchNotes(searchText).asLiveData()
+            }
         }
 
     fun insert(note: Notes) = viewModelScope.launch {
