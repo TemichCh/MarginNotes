@@ -24,8 +24,8 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.utils.showImagesThumb
-import com.example.notesdemo.veiwmodel.NotesViewModel
-import com.example.notesdemo.veiwmodel.NotesViewModelFactory
+import com.example.notesdemo.viewmodel.NotesViewModel
+import com.example.notesdemo.viewmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_edit_note.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -246,15 +246,17 @@ class EditNote : AppCompatActivity() {
                     // FIXME обработку тут стоит доделать :)
                     // If we weren't granted the permission, check to see if we should show
                     // rationale for the permission.
+                    /*
                     val showRationale =
+
                         ActivityCompat.shouldShowRequestPermissionRationale(
                             this,
                             Manifest.permission.READ_EXTERNAL_STORAGE
                         )
-
+                        */
                     /**
                      * If we should show the rationale for requesting storage permission, then
-                     * we'll show [ActivityMainBinding.permissionRationaleView] which does this.
+                     * we'll show ActivityMainBinding.permissionRationaleView which does this.
                      *
                      * If `showRationale` is false, this means the user has not only denied
                      * the permission, but they've clicked "Don't ask again". In this case
@@ -278,12 +280,15 @@ class EditNote : AppCompatActivity() {
      * has been granted to the app.
      */
     // FIXME страшно поехал весь код
-    private fun haveStoragePermission()
-            : Boolean =
-        ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PERMISSION_GRANTED
+    private fun haveStoragePermission() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PERMISSION_GRANTED
+        } else {
+            TODO("VERSION.SDK_INT < JELLY_BEAN")
+        }
 
     /**
      * Convenience method to request [Manifest.permission.READ_EXTERNAL_STORAGE] permission.
@@ -359,7 +364,7 @@ class EditNote : AppCompatActivity() {
 
         val btnEdit = toolbar_edit_note.menu?.findItem(R.id.menu_save)
         if (btnEdit != null)
-            // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
+        // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
             with(btnEdit) {
                 // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
                 val icon =
@@ -382,7 +387,7 @@ class EditNote : AppCompatActivity() {
 
         val btnDel = toolbar_edit_note.menu?.findItem(R.id.menu_delete)
         if (btnDel != null)
-            // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
+        // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
             with(btnDel) {
                 // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
                 val icon =

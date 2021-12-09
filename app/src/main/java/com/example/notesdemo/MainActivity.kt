@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
 import com.example.notesdemo.model.Notes
-import com.example.notesdemo.veiwmodel.NotesViewModel
-import com.example.notesdemo.veiwmodel.NotesViewModelFactory
+import com.example.notesdemo.viewmodel.NotesViewModel
+import com.example.notesdemo.viewmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.notes_list_item.*
