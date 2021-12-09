@@ -1,5 +1,8 @@
 package com.example.notesdemo
 
+// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
+//  вообще перестать работать.
+//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Build
@@ -16,12 +19,6 @@ import com.example.notesdemo.model.Notes
 import com.example.notesdemo.veiwmodel.NotesViewModel
 import com.example.notesdemo.veiwmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-// FIXME видно неиспользуемый импорт - надо использовать автоматическое удаление неиспользуемых импортов
-//  фича IDE - Optimize imports
-import com.google.android.material.internal.ContextUtils.getActivity
-// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
-//  вообще перестать работать.
-//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.notes_list_item.*
 
@@ -37,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     //  стоит почитать блок в андроид доке - https://developer.android.com/guide/topics/resources/runtime-changes?hl=en
     //  рекомендация моя - унести состояние в ViewModel
     private var selectionModeEnabled = false
+
     // FIXME это свойство точно не должно быть публичным. никто снаружи этого класса не должен знать
     //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
     //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
@@ -71,7 +69,11 @@ class MainActivity : AppCompatActivity() {
                 // FIXME логика формирования опций для открытия экрана должна быть вынесена в
                 //  отдельную функцию, что позволит реюзать эти опции
                 val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptions.makeSceneTransitionAnimation(this,iv_has_image,iv_has_image.transitionName).toBundle()
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        this,
+                        iv_has_image,
+                        iv_has_image.transitionName
+                    ).toBundle()
                 } else {
                     ActivityOptionsCompat.makeCustomAnimation(this, 0, 0).toBundle()
                 }
@@ -87,7 +89,12 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("note", note)
                 // FIXME IDE подсказывает что такой метод недоступен на API 14, которая заявлена как
                 //  поддерживаемая
-                startActivity(intent,bundle)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(intent, bundle)
+                } else {
+                    //TODO обработка на API 14
+                }
+
             } else {
                 startSelection(note)
             }
@@ -120,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             //  в companion object'е активити которую открываем. и никаких хардкод строк в ключах
             //  интента не должно быть
             val intent = Intent(this@MainActivity, EditNote::class.java)
-            intent.putExtra("isEdit",true)
+            intent.putExtra("isEdit", true)
             startActivity(intent)
         }
     }
