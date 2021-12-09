@@ -6,9 +6,7 @@ import com.example.notesdemo.model.Notes
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
-    // FIXME эта лайвдата вполне может быть публичной и ее значение будет менять поле ввода поиска.
-    //  вместо вызова handleSearchQuery
-    private val searchQuery = MutableLiveData<String>("")
+    val searchQuery = MutableLiveData("")
 
     // FIXME на выходе мы получать должны лайвдату с немутабельным списком.
     val allNotes: LiveData<MutableList<Notes>> =
