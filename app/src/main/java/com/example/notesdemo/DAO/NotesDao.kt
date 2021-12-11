@@ -8,12 +8,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NotesDao {
     // FIXME некорректное имя - даже IDE пишет что не соответствует кодстайлу
+    //fixed?
     @Insert
-    suspend fun InsertNote(note:Notes)
+    suspend fun insertNote(note:Notes)
 
     // FIXME не можем мы получать MutableList - не мутабельный мы получаем, List просто
+    //fixed?
     @Query("Select * from notes")
-    fun gelAllNotes(): Flow<MutableList<Notes>>
+    fun gelAllNotes(): Flow<List<Notes>>
 
     @Update
     suspend fun updateNote(note: Notes)
@@ -22,6 +24,7 @@ interface NotesDao {
     suspend fun deleteNote(note: Notes)
 
     // FIXME не можем мы получать MutableList - не мутабельный мы получаем, List просто
+    //fixed?
     @Query("Select * from notes where noteName like '%' || :search || '%'")
-    fun searchNotes(search:String): Flow<MutableList<Notes>>
+    fun searchNotes(search:String): Flow<List<Notes>>
 }

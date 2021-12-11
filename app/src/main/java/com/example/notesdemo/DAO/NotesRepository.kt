@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.Flow
 class NotesRepository(private val db: NotesDao) {
 
     // FIXME выдаем в Flow не мутабельные списки
-    val allNotes:Flow<MutableList<Notes>> = db.gelAllNotes()
+    //fixed?
+    val allNotes:Flow<List<Notes>> = db.gelAllNotes()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insertNote(note:Notes){
-        db.InsertNote(note)
+        db.insertNote(note)
     }
 
     suspend fun deleteNote(note: Notes) {
@@ -28,6 +29,8 @@ class NotesRepository(private val db: NotesDao) {
     // FIXME выдаем в Flow не мутабельные списки
     //  https://dev.to/zachklipp/two-mutables-dont-make-a-right-2kgp тут кейс немного другой но
     //  проблема мутабельности таже
-    fun searchNotes(text:String):Flow<MutableList<Notes>> = db.searchNotes(text)
+    //fixed? MutableLIst изменяемый, поэтому добавление/удаление строк не "фиксируется" т.е. при сравнении объект equals предыдущему
+    // в отличии от List. При пересоздании это будет уже новый объект != предыдущему т.к. объект пересоздан
+    fun searchNotes(text:String):Flow<List<Notes>> = db.searchNotes(text)
 
 }
