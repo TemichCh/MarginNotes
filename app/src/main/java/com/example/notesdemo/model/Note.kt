@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity(tableName = "Notes")
 data class Note(
-    @PrimaryKey(autoGenerate = true) var noteId: Int?,
+    @PrimaryKey(autoGenerate = true) var noteId: Int? = null,
     var noteName: String,
     var noteText: String,
     // FIXME мы не можем полагаться на ссылки до изображений вне нашего приложения - они в любой
