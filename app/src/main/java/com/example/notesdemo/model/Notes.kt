@@ -4,14 +4,14 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+//import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 
 @Entity(tableName = "Notes")
 // FIXME @Parcelize излишен - не надо эти данные в парселабл упаковывать. вместо этого между экранами
 //  надо слать noteId, а дальше в любом месте по id из базы вытащим
-@Parcelize
+//@Parcelize
 // FIXME нейминг некорректный. сам датакласс это Note - заметка. а не заметки.
 data class Notes(
     @PrimaryKey(autoGenerate = true) var noteId: Int?,
@@ -33,8 +33,8 @@ data class Notes(
     // FIXME не стоит вписывать в сущность заметки факт "выбрана ли она на конкретном экране" - надо
     //  просто во вьюмодели соответствующего экрана держать список айдишников выбранных заметок.
     //  выбор это чисто ui детали, которые ниже viewmodel спуститься не могут
-    @Ignore var selected: Boolean = false
-) : Parcelable {
+    //@Ignore var selected: Boolean = false
+) /*: Parcelable {
     // FIXME почему не использованы дефолтные аргументы датакласса, зачем отдельный конструктор?
     //  я вижу что лучше было просто для noteId тоже null по умолчанию указать
     //  это избавит от поддержки еще и конструктора дополнительного
@@ -46,4 +46,4 @@ data class Notes(
         image = image,
         createDate = createDate
     )
-}
+}*/
