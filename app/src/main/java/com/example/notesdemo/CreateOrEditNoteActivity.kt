@@ -7,11 +7,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
-import android.widget.TextView
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -27,9 +25,6 @@ import com.example.notesdemo.model.Note
 import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.viewmodel.NotesViewModel
 import com.example.notesdemo.viewmodel.NotesViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-//import kotlinx.android.synthetic.main.activity_edit_note.*
-//import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
@@ -42,9 +37,6 @@ private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
 class CreateOrEditNoteActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditNoteBinding
-
-    // FIXME не надо так сохранять никакие вьюхи. строковые константы вообще не надежная штука
-    lateinit var viewFields: Map<String, TextView>
 
     // FIXME не по кодстайлу - компаньены в самом конце идут
     companion object {
@@ -80,8 +72,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                 val data: Intent? = result.data
                 val selectedImageUri: Uri? = data?.data
                 if (null != selectedImageUri) {
-                    notes_image.setTag(selectedImageUri.toString())
-                    notes_image.setImageURI(selectedImageUri)
+                    binding.notesImage.setTag(selectedImageUri.toString())
+                    binding.notesImage.setImageURI(selectedImageUri)
                 }
             }
         }
@@ -93,32 +85,48 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // FIXME выше уже сказал что вместо этого надо получать id заметки и отдавать в вьюмодель
-        intent.getParcelableExtra<Note>("note").also { currentNote = it }
+        //intent.getParcelableExtra<Int?>("note").also { currentNote = it }
         // FIXME нет смысла сохранять в инстанс отдельный флаг - интент он всегда доступен, даже
         //  после пересоздания экрана - с него можно читать
         isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
             "isEdit",
             false
         )
-        initViews()
 
         // FIXME вместо выставления так данных - должна быть привязка к лайвдатам из вьюмодели,
         //  вьюхи на активити должны быть тупыми и просто получают значения от вьюмодели. а та в
         //  свою очередь получит все данные с бд и выставит в лайвдаты
         currentNote?.let {
-            notes_name.setText(it.noteName)
-            notes_text.setText(it.noteText)
+            binding.notesName.setText(it.noteName)
+            binding.notesText.setText(it.noteText)
             if (it.image != null) {
                 openMediaStore()
             }
-        } ?: kotlin.run {
-            // FIXME бесполезный вызов run
         }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val fabAddImage = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        fabAddImageOnClick()
+        fabClearImageOnClick()
+    }
+
+    private fun fabClearImageOnClick() {
+        val fabClearImage =
+            binding.fabEditClearImage //findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
+        // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
+        //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
+        fabClearImage.setOnClickListener {
+            // FIXME тут мы должны вызвать обработчик во вьюмодели, там очистится лайвдата и в свою
+            //  очередь сработает подписка ui на эту лайвдату и изображение уберется
+            currentNote?.image = null
+            Glide.with(binding.notesImage).clear(binding.notesImage)
+        }
+    }
+
+    private fun fabAddImageOnClick() {
+        val fabAddImage =
+            binding.fabEditAddImage //findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
         // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
         //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
         fabAddImage.setOnClickListener {
@@ -126,20 +134,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             // FIXME заголовок не хардкодить надо а с ресурсов читать
-            resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
+            resultLauncher.launch(
+                Intent.createChooser(
+                    intent,
+                    getString(R.string.selectPictureTitle)
+                )
+            )
         }
-
-        val fabClearImage = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
-        // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
-        //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
-        fabClearImage.setOnClickListener {
-            // FIXME тут мы должны вызвать обработчик во вьюмодели, там очистится лайвдата и в свою
-            //  очередь сработает подписка ui на эту лайвдату и изображение уберется
-            currentNote?.image = null
-            Glide.with(notes_image).clear(notes_image)
-        }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -166,8 +167,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             // FIXME должны просто оповещать вьюмодель, а она уже действовать
             if (isEditMode) {
                 currentNote?.let {
-                    notes_name.setText(it.noteName)
-                    notes_text.setText(it.noteText)
+                    binding.notesName.setText(it.noteName)
+                    binding.notesText.setText(it.noteText)
                     if (it.image != null) {
                         openMediaStore()
                     }
@@ -201,11 +202,11 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     private fun InsertUpdateNote() {
         if (currentNote == null) {
             val newNote = Note(
-                noteName = notes_name.text.toString(),
-                noteText = notes_text.text.toString(),
-                image = if (notes_image.tag != null)
-                    notes_image.getTag().toString()
-                else null,
+                noteName = binding.notesName.text.toString(),
+                noteText = binding.notesText.text.toString(),
+                image = if (binding.notesImage.tag != null) {
+                    binding.notesImage.getTag().toString()
+                } else null,
                 createDate = Date()
             )
             notesVModel.insert(newNote)
@@ -214,11 +215,11 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         } else {
             if (currentNote != null) {
                 //currentNote.also { note ->
-                currentNote!!.noteName = notes_name.text.toString()
-                currentNote!!.noteText = notes_text.text.toString()
+                currentNote!!.noteName = binding.notesName.text.toString()
+                currentNote!!.noteText = binding.notesText.text.toString()
                 currentNote!!.createDate = currentNote!!.createDate
-                if (notes_image.tag != null)
-                    currentNote!!.image = notes_image.getTag().toString()
+                if (binding.notesImage.tag != null)
+                    currentNote!!.image = binding.notesImage.getTag().toString()
                 currentNote!!.modifiedDate = Date()
                 //}
                 notesVModel.update(currentNote!!)
@@ -326,99 +327,53 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     private fun showImages() {
         if (currentNote?.image != null) {
             val imageUri = showImagesThumb(context = this.baseContext, currentNote?.image!!.toUri())
-            notes_image.tag = imageUri.toString()
+            binding.notesImage.tag = imageUri.toString()
             Glide.with(this)
                 .load(imageUri)
                 .thumbnail(0.33f)
                 .centerCrop()
-                .into(notes_image)
+                .into(binding.notesImage)
         }
-    }
-
-    private fun initViews() {
-        // FIXME очень странная и ненадежная логика с строковыми константами - не надо так, сломается
-        viewFields = mapOf(
-            "noteName" to notes_name,
-            "noteText" to notes_text
-        )
-        Log.d("M_EditNote", "initViews=$isEditMode")
-        showCurrentMode(isEditMode)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun showCurrentMode(isEdit: Boolean) {
-        // FIXME кода будет подключен ViewBinding просто все нужные текст вью соберешь в listOf и
-        //  настроишь, без страшных мап
-        val info =
-            viewFields
-        for ((_, v) in info) {
-            v as EditText
-            v.isFocusable = isEdit
-            v.isFocusableInTouchMode = isEdit
-            v.isEnabled = isEdit
-            v.background.alpha = if (isEdit) 255 else 0
+        val viewFields = listOf<View>(binding.notesName, binding.notesText)
+        viewFields.forEach { view ->
+            view.apply {
+                isFocusable = isEdit
+                isFocusableInTouchMode = isEdit
+                isEnabled = isEdit
+                background.alpha = if (isEdit) 255 else 0
+            }
         }
 
-        //val tb =   findViewById<Toolbar>(R.id.toolbar_edit_note)
-        val fabImageAdd = findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
-        fabImageAdd.isVisible = isEdit
+        binding.fabEditAddImage.isVisible = isEdit
+        binding.fabEditClearImage.isVisible = (isEdit && currentNote?.image != null)
 
-        val fabImageClear = findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
-        fabImageClear.isVisible = (isEdit && currentNote?.image != null)
-
-
-        val btnEdit = toolbar_edit_note.menu?.findItem(R.id.menu_save)
-        if (btnEdit != null)
-        // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
-            with(btnEdit) {
-                // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
-                val icon =
-                    //TODO("VERSION.SDK_INT < LOLLIPOP")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        if (isEdit)
-                            resources.getDrawable(R.drawable.ic_outline_done_24, theme)
-                        else resources.getDrawable(R.drawable.ic_outline_edit_24, theme)
-
-                    } else {
-                        if (!isEdit) ContextCompat.getDrawable(
-                            this@CreateOrEditNoteActivity,
-                            R.drawable.ic_outline_edit_24
-                        )
-                        else
-                            ContextCompat.getDrawable(
-                                this@CreateOrEditNoteActivity,
-                                R.drawable.ic_outline_done_24
-                            )
-                    }
-                setIcon(icon)
+        binding.toolbarEditNote.menu?.findItem(R.id.menu_save)?.apply {
+            //TODO заменить на отдельный пункт меню?
+            val icon = if (isEdit) {
+                R.drawable.ic_outline_done_24
+            } else {
+                R.drawable.ic_outline_edit_24
             }
+            setIcon(
+                ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon)
+            )
+        }
 
-        val btnDel = toolbar_edit_note.menu?.findItem(R.id.menu_delete)
-        if (btnDel != null)
-        // FIXME можно сразу btnEdit?.apply { ... } это заменит if и with
-            with(btnDel) {
-                // FIXME использование ContextCompat уже в себе содержит проверки версии сдк, не надо себе усложнять жизнь
-                val icon =
-                    //TODO("VERSION.SDK_INT < LOLLIPOP")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        if (isEdit)
-                            resources.getDrawable(R.drawable.ic_outline_cancel_24, theme)
-                        else resources.getDrawable(R.drawable.ic_outline_delete_24, theme)
-
-                    } else {
-                        if (!isEdit) ContextCompat.getDrawable(
-                            this@CreateOrEditNoteActivity,
-                            R.drawable.ic_outline_cancel_24
-                        )
-                        else
-                            ContextCompat.getDrawable(
-                                this@CreateOrEditNoteActivity,
-                                R.drawable.ic_outline_delete_24
-                            )
-                    }
-                setIcon(icon)
+        binding.toolbarEditNote.menu?.findItem(R.id.menu_delete)?.apply {
+            //TODO заменить на отдельный пункт меню?
+            val icon = if (isEdit) {
+                R.drawable.ic_outline_cancel_24
+            } else {
+                R.drawable.ic_outline_delete_24
             }
-
+            setIcon(
+                ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon)
+            )
+        }
     }
 
 // пример как закрыть от внешнего доступа всю логику формирования intent'а по которому можно открыть экран
