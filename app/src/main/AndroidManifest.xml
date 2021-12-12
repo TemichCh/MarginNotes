@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".EditNote"
+            android:name=".CreateOrEditNoteActivity"
             android:exported="true"
             android:parentActivityName="com.example.notesdemo.MainActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->

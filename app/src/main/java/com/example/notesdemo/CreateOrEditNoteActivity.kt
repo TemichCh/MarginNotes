@@ -22,13 +22,14 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
+import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.viewmodel.NotesViewModel
 import com.example.notesdemo.viewmodel.NotesViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.activity_edit_note.*
-import kotlinx.android.synthetic.main.activity_main.*
+//import kotlinx.android.synthetic.main.activity_edit_note.*
+//import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
@@ -38,7 +39,10 @@ import java.util.*
 private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
 
 // FIXME нейминг надо поправить. тут как я вижу правдивое имя будет CreateOrEditNoteActivity
-class EditNote : AppCompatActivity() {
+class CreateOrEditNoteActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityEditNoteBinding
+
     // FIXME не надо так сохранять никакие вьюхи. строковые константы вообще не надежная штука
     lateinit var viewFields: Map<String, TextView>
 
@@ -85,7 +89,8 @@ class EditNote : AppCompatActivity() {
     //    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_note)
+        binding = ActivityEditNoteBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // FIXME выше уже сказал что вместо этого надо получать id заметки и отдавать в вьюмодель
         intent.getParcelableExtra<Notes>("note").also { currentNote = it }
@@ -376,11 +381,14 @@ class EditNote : AppCompatActivity() {
 
                     } else {
                         if (!isEdit) ContextCompat.getDrawable(
-                            this@EditNote,
+                            this@CreateOrEditNoteActivity,
                             R.drawable.ic_outline_edit_24
                         )
                         else
-                            ContextCompat.getDrawable(this@EditNote, R.drawable.ic_outline_done_24)
+                            ContextCompat.getDrawable(
+                                this@CreateOrEditNoteActivity,
+                                R.drawable.ic_outline_done_24
+                            )
                     }
                 setIcon(icon)
             }
@@ -399,12 +407,12 @@ class EditNote : AppCompatActivity() {
 
                     } else {
                         if (!isEdit) ContextCompat.getDrawable(
-                            this@EditNote,
+                            this@CreateOrEditNoteActivity,
                             R.drawable.ic_outline_cancel_24
                         )
                         else
                             ContextCompat.getDrawable(
-                                this@EditNote,
+                                this@CreateOrEditNoteActivity,
                                 R.drawable.ic_outline_delete_24
                             )
                     }
