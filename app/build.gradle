@@ -4,7 +4,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     // FIXME андроид экстеншены уже deprecated - https://habr.com/ru/post/526192/ надо избавиться
-    id 'kotlin-android-extensions'
+    //id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 
 }
