@@ -14,4 +14,5 @@
     <string name="insert_note">Добавляю заметку</string>
     <string name="update_note">Записываем изменения</string>
     <string name="searchQueryHint">Введите наименование для поиска</string>
+    <string name="selectPictureTitle">Выберите изображение</string>
 </resources>
