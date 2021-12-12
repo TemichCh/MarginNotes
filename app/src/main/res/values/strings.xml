@@ -13,4 +13,5 @@
     <string name="transition_image_view">TransitionImage</string>
     <string name="insert_note">Добавляю заметку</string>
     <string name="update_note">Записываем изменения</string>
+    <string name="searchQueryHint">Введите наименование для поиска</string>
 </resources>
