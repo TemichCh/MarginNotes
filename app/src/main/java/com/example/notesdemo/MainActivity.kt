@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     //  после пересоздания активити. а это произойдет обязательно.
     //  стоит почитать блок в андроид доке - https://developer.android.com/guide/topics/resources/runtime-changes?hl=en
     //  рекомендация моя - унести состояние в ViewModel
-    private var selectionModeEnabled = false
+    //private var selectionModeEnabled = false
 
     // FIXME это свойство точно не должно быть публичным. никто снаружи этого класса не должен знать
     //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.mainActivityToolbar)
-
 
         binding.recyclerviewNotes.layoutManager = LinearLayoutManager(this)
         binding.recyclerviewNotes.adapter = adapter
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                 // FIXME передавать между экранами прям объект заметки - оверхед.
                 //  лучше передавать id заметки, а целевой экран без пробелм считает с базы данных
                 //  эту заметку по ее id
-                intent.putExtra("note", note)
+                intent.putExtra("noteId", note.noteId)
                 // FIXME IDE подсказывает что такой метод недоступен на API 14, которая заявлена как
                 //  поддерживаемая
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -147,18 +146,18 @@ class MainActivity : AppCompatActivity() {
         val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
         // FIXME никогда нигде не должно быть хардкод строк которые выводятся юзеру. Все выводимые
         //  юзеру строки должны браться из ресурсов андроида, для поддержки локализации.
-        //fixed
+        //fixed?
         searchView.queryHint = getString(R.string.searchQueryHint)
         searchView.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                notesVModel.handleSearchQuery(query)
+                notesVModel.searchQuery.value = query
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                notesVModel.handleSearchQuery(newText)
+                notesVModel.searchQuery.value = newText
                 return true
             }
         })

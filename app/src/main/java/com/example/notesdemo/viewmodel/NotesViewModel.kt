@@ -6,7 +6,8 @@ import com.example.notesdemo.model.Note
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
-    val searchQuery = MutableLiveData("")
+
+    val searchQuery =  MutableLiveData("")
 
     val allNotes: LiveData<List<Note>> =
         Transformations.switchMap(searchQuery) { searchText ->
@@ -31,9 +32,9 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
 
     // FIXME не нужен сам метод, как выше в комменте к лайвдате сказано. и также не нужно делать
     //  изменение значения лайвдаты внутри скоупа - корутина тут не нужна
-    fun handleSearchQuery(text: String) = viewModelScope.launch {
+    /*fun handleSearchQuery(text: String) = viewModelScope.launch {
         searchQuery.value = text
-    }
+    }*/
 }
 
 // FIXME вместо фиксированной фабрики можно сделать класс общего назначения (с Generic), который
