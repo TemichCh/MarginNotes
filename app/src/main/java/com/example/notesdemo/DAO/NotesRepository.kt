@@ -2,27 +2,27 @@
 package com.example.notesdemo.DAO
 
 import androidx.annotation.WorkerThread
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import kotlinx.coroutines.flow.Flow
 
 class NotesRepository(private val db: NotesDao) {
 
     // FIXME выдаем в Flow не мутабельные списки
     //fixed?
-    val allNotes:Flow<List<Notes>> = db.gelAllNotes()
+    val allNotes:Flow<List<Note>> = db.gelAllNotes()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertNote(note:Notes){
+    suspend fun insertNote(note:Note){
         db.insertNote(note)
     }
 
-    suspend fun deleteNote(note: Notes) {
+    suspend fun deleteNote(note: Note) {
         db.deleteNote(note)
 
     }
 
-    suspend fun updateNote(note: Notes) {
+    suspend fun updateNote(note: Note) {
         db.updateNote(note)
     }
 
@@ -31,6 +31,6 @@ class NotesRepository(private val db: NotesDao) {
     //  проблема мутабельности таже
     //fixed? MutableLIst изменяемый, поэтому добавление/удаление строк не "фиксируется" т.е. при сравнении объект equals предыдущему
     // в отличии от List. При пересоздании это будет уже новый объект != предыдущему т.к. объект пересоздан
-    fun searchNotes(text:String):Flow<List<Notes>> = db.searchNotes(text)
+    fun searchNotes(text:String):Flow<List<Note>> = db.searchNotes(text)
 
 }

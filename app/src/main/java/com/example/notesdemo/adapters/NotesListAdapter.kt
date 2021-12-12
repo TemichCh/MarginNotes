@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.NotesListItemBinding
 import com.example.notesdemo.extensions.humanizeDiff
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import com.example.notesdemo.utils.showImagesThumb
 import java.util.*
 
@@ -31,14 +31,14 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     //  1. закрыть поле приватностью - private
     //  2. сделать поле неизменяемым val - нам не надо менять ссылку на объект, мы будем просто
     //  менять содержимое списка, а не указывать другой список
-    val notesList = mutableListOf<Notes>()
+    val notesList = mutableListOf<Note>()
 
-    private var itemClickListener: ((Notes) -> Unit)? = null
+    private var itemClickListener: ((Note) -> Unit)? = null
 
-    private var itemLongClickListener: ((Notes) -> Unit)? = null
+    private var itemLongClickListener: ((Note) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setNotes(notes: List<Notes>) {
+    fun setNotes(notes: List<Note>) {
         // FIXME вместо использования списка который нам дали, лучше чистить текущий наш список и
         //  добавлять все элементы из списка переданного в функцию в наш список - тогда не будет
         //  вероятности что передан как аргумент MutableList и после вызова setItems где-то он изменяется
@@ -110,13 +110,13 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
-    fun setOnNoteTapListener(listener: ((Notes) -> Unit)) {
+    fun setOnNoteTapListener(listener: ((Note) -> Unit)) {
         this.itemClickListener = listener
     }
 
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
-    fun onNoteLongClickListener(listener: (Notes) -> Unit){
+    fun onNoteLongClickListener(listener: (Note) -> Unit){
         this.itemLongClickListener =listener
     }
 

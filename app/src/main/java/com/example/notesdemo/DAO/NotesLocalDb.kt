@@ -7,13 +7,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
 
-@Database(entities = [Notes::class], version = 1)
+@Database(entities = [Note::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class NotesLocalDb : RoomDatabase() {
 
@@ -66,8 +66,8 @@ private class NotesItemsCallback(val scope: CoroutineScope) : RoomDatabase.Callb
 
     }
 
-    private fun createInitialNote(): Notes {
-        val initialNote = Notes(
+    private fun createInitialNote(): Note {
+        val initialNote = Note(
             noteName = "Добро пожаловать!", noteText = """
                 Перед Вами простое приложение для создания заметок.
                 Это могут быть различные записи которые Вы хотели бы сохранить в Вашем телефоне.

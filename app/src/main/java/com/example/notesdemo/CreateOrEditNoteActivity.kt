@@ -23,7 +23,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import com.example.notesdemo.utils.showImagesThumb
 import com.example.notesdemo.viewmodel.NotesViewModel
 import com.example.notesdemo.viewmodel.NotesViewModelFactory
@@ -55,7 +55,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
     // FIXME для активности все равно должно быть на объект заметки - активность должна просто выводить
     //  все что скажет вьюмодель и ничего не додумывать, и не хранить в себе
-    private var currentNote: Notes? = null
+    private var currentNote: Note? = null
 
     // FIXME это свойство не должно быть публичным. а также его можно вообще сделать не изменяемым,
     //  вычисляемым через lazy, считывая значение из intent.
@@ -93,7 +93,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // FIXME выше уже сказал что вместо этого надо получать id заметки и отдавать в вьюмодель
-        intent.getParcelableExtra<Notes>("note").also { currentNote = it }
+        intent.getParcelableExtra<Note>("note").also { currentNote = it }
         // FIXME нет смысла сохранять в инстанс отдельный флаг - интент он всегда доступен, даже
         //  после пересоздания экрана - с него можно читать
         isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
@@ -200,7 +200,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     //  должен все эти данные готовить
     private fun InsertUpdateNote() {
         if (currentNote == null) {
-            val newNote = Notes(
+            val newNote = Note(
                 noteName = notes_name.text.toString(),
                 noteText = notes_text.text.toString(),
                 image = if (notes_image.tag != null)

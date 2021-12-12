@@ -2,13 +2,13 @@ package com.example.notesdemo.viewmodel
 
 import androidx.lifecycle.*
 import com.example.notesdemo.DAO.NotesRepository
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     val searchQuery = MutableLiveData("")
 
-    val allNotes: LiveData<List<Notes>> =
+    val allNotes: LiveData<List<Note>> =
         Transformations.switchMap(searchQuery) { searchText ->
             if (searchText.isNullOrEmpty()) {
                 notesRep.allNotes.asLiveData()
@@ -17,15 +17,15 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
             }
         }
 
-    fun insert(note: Notes) = viewModelScope.launch {
+    fun insert(note: Note) = viewModelScope.launch {
         notesRep.insertNote(note)
     }
 
-    fun delete(note: Notes) = viewModelScope.launch {
+    fun delete(note: Note) = viewModelScope.launch {
         notesRep.deleteNote(note)
     }
 
-    fun update(note: Notes) = viewModelScope.launch {
+    fun update(note: Note) = viewModelScope.launch {
         notesRep.updateNote(note)
     }
 

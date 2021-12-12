@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
 import com.example.notesdemo.databinding.ActivityMainBinding
-import com.example.notesdemo.model.Notes
+import com.example.notesdemo.model.Note
 import com.example.notesdemo.viewmodel.NotesViewModel
 import com.example.notesdemo.viewmodel.NotesViewModelFactory
 
@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
     // FIXME эта пачка логики должна уйти в вьюмодель и по сути делать следующее:
     //  лайвдата selectionMode включается в true, в лайвдату selectedNotes добавляем id выбранного наим элемента
     //  а уже на основе этих лайвдат у нас должен перестраиваться UI, за счет поставленных в onCreate observe
-    private fun startSelection(note: Notes) {
+    private fun startSelection(note: Note) {
         note.selected = !note.selected
         val index = adapter.notesList.indexOf(note)
         adapter.notifyItemChanged(index)
@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
 
     // FIXME логика удаления вся во вьюмодели должна быть. не должен ui чето там додумывать -
     //  он просто обновляется реагируя на изменения livedata
-    private fun deleteNote(note: Notes, position: Int) {
+    private fun deleteNote(note: Note, position: Int) {
         val isNoteDeleted = notesVModel.delete(note)
         isNoteDeleted.also {
             adapter.notesList.remove(note)
