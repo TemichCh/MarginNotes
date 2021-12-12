@@ -1,24 +1,23 @@
 package com.example.notesdemo.adapters
 
+// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
+//  вообще перестать работать.
+//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
+//import kotlinx.android.synthetic.main.activity_edit_note.*
+//import kotlinx.android.synthetic.main.notes_list_item.view.*
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.notesdemo.R
+import com.example.notesdemo.databinding.NotesListItemBinding
 import com.example.notesdemo.extensions.humanizeDiff
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.utils.showImagesThumb
-// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
-//  вообще перестать работать.
-//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
-import kotlinx.android.synthetic.main.activity_edit_note.*
-import kotlinx.android.synthetic.main.notes_list_item.view.*
 import java.util.*
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
@@ -45,16 +44,16 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         //  вероятности что передан как аргумент MutableList и после вызова setItems где-то он изменяется
         notesList.clear()
         notesList.addAll(notes)
-        //= notes.toMutableList()
         // FIXME в пару к notifyDataSetChanged стоит указать в init блоке адаптера setHasStableIds(true)
         //  чтобы были анимации изменений из коробки
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.notes_list_item, parent, false)
-        return NotesViewHolder(view)
+        val layouyInflater =
+            LayoutInflater.from(parent.context)//.inflate(R.layout.notes_list_item, parent, false)
+        val itemBinding = NotesListItemBinding.inflate(layouyInflater, parent, false)
+        return NotesViewHolder(itemBinding)
 
     }
 
@@ -63,7 +62,6 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         val note = notesList[position]
         holder.itemName.text = note.noteName
-        holder.itemDate.text = (note.modifiedDate?:note.createDate).humanizeDiff(Date())
 
             /*if (note.modifiedDate != null)
             // FIXME вместо форскаста лучше заиспользовать конструкцию
@@ -73,6 +71,8 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
             note.modifiedDate!!.humanizeDiff(Date())
         else
             note.createDate.humanizeDiff(Date())*/
+        holder.itemDate.text = (note.modifiedDate?:note.createDate).humanizeDiff(Date())
+
         holder.itemText.text = note.noteText
 
         // FIXME в биндинге ВСЕГДА надо обрабатывать обе ветки условий.
@@ -131,14 +131,14 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 }
 
 
-class NotesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class NotesViewHolder(binding: NotesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
     // FIXME для всех свойств надо указывать тип чтобы:
     //  1. при чтении было понятно что тут будет храниться
     //  2. IDE не ругалась что у нас тип от Java не понятно нуллабелен или нет
-    val itemDate: TextView = view.list_item_date
-    val itemName: TextView = view.list_item_name
-    val itemText: TextView = view.list_item_text
-    val image: ImageView = view.iv_has_image
+    val itemDate: TextView = binding.listItemDate
+    val itemName: TextView = binding.listItemName
+    val itemText: TextView = binding.listItemText
+    val image: ImageView = binding.ivHasImage
 }
 
 

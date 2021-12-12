@@ -15,14 +15,14 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
+import com.example.notesdemo.databinding.ActivityMainBinding
 import com.example.notesdemo.model.Notes
 import com.example.notesdemo.viewmodel.NotesViewModel
 import com.example.notesdemo.viewmodel.NotesViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.notes_list_item.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     // FIXME не надо сохранять ссылки на UI элементы, это места для потенциальных ошибок с утечкой памяти
     //  по сути элементы эти нужны только в момент настройки, поэтому сохранять их на долго нет нужды
@@ -39,24 +39,26 @@ class MainActivity : AppCompatActivity() {
     //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
     //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
     //  логику заполнения данных
-    val adapter = NotesListAdapter()
+    //fixed -> move to private
+    private val adapter = NotesListAdapter()
 
     // FIXME это свойство тоже не должно быть публичным. это детали реализации конкретно этого активити
-    val notesVModel: NotesViewModel by viewModels {
+    private val notesVModel: NotesViewModel by viewModels {
         // FIXME тут надо получение зависимостей переделать, по однмоу из вариантов описанных в NotesApplication
         NotesViewModelFactory((application as NotesApplication).repository)
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(main_activity_toolbar)
+        setSupportActionBar(binding.mainActivityToolbar)
 
-        recyclerview_notes.layoutManager = LinearLayoutManager(this)
-        recyclerview_notes.adapter = adapter
+
+        binding.recyclerviewNotes.layoutManager = LinearLayoutManager(this)
+        binding.recyclerviewNotes.adapter = adapter
 
         adapter.setOnNoteTapListener { note ->
             // FIXME как я уже говорил выше лучше логику выбора вынести в viewmodel.
@@ -71,8 +73,8 @@ class MainActivity : AppCompatActivity() {
                 val bundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptions.makeSceneTransitionAnimation(
                         this,
-                        iv_has_image,
-                        iv_has_image.transitionName
+                        binding.recyclerviewNotes.findViewById(R.id.iv_has_image),
+                        getString(R.string.transition_image_view)
                     ).toBundle()
                 } else {
                     ActivityOptionsCompat.makeCustomAnimation(this, 0, 0).toBundle()
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 //  createIntent(context: Context, note: Notes): Intent
                 //  таким образом мы даем возможность легко создавать интент для открытия экрана
                 //  откуда угодно, не дублируя код и не показывая внутрянку активити другим классам
-                val intent = Intent(this@MainActivity, EditNote::class.java)
+                val intent = Intent(this@MainActivity, CreateOrEditNoteActivity::class.java)
                 // FIXME передавать между экранами прям объект заметки - оверхед.
                 //  лучше передавать id заметки, а целевой экран без пробелм считает с базы данных
                 //  эту заметку по ее id
@@ -114,19 +116,22 @@ class MainActivity : AppCompatActivity() {
 
         val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
 
-        with(recyclerview_notes) {
+        binding.recyclerviewNotes.addItemDecoration(divider)
+        /*with() {
             // FIXME это уже применено, зачем повторно?
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            addItemDecoration(divider)
-        }
+            //layoutManager = LinearLayoutManager(this@MainActivity)
+
+        }*/
 
         // FIXME когда подключишь ViewBinding надо заменить на типобезопасное получение вьюхи
-        val fab = findViewById<FloatingActionButton>(R.id.fab_main_add_note)
+        //fixed ?
+        val fab =
+            binding.fabMainAddNote //findViewById<FloatingActionButton>(R.id.fab_main_add_note)
         fab.setOnClickListener {
             // FIXME также как я выше говорил - надо чтобы формирование интента было не тут а
             //  в companion object'е активити которую открываем. и никаких хардкод строк в ключах
             //  интента не должно быть
-            val intent = Intent(this@MainActivity, EditNote::class.java)
+            val intent = Intent(this@MainActivity, CreateOrEditNoteActivity::class.java)
             intent.putExtra("isEdit", true)
             startActivity(intent)
         }
@@ -142,7 +147,8 @@ class MainActivity : AppCompatActivity() {
         val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
         // FIXME никогда нигде не должно быть хардкод строк которые выводятся юзеру. Все выводимые
         //  юзеру строки должны браться из ресурсов андроида, для поддержки локализации.
-        searchView.queryHint = "Введите наименование для поиска"
+        //fixed
+        searchView.queryHint = getString(R.string.searchQueryHint)
         searchView.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
@@ -234,8 +240,7 @@ class MainActivity : AppCompatActivity() {
     //  он просто обновляется реагируя на изменения livedata
     private fun deleteNote(note: Notes, position: Int) {
         val isNoteDeleted = notesVModel.delete(note)
-        isNoteDeleted.also { /*dataOrException ->
-            if (isProductDeleted != null) {*/
+        isNoteDeleted.also {
             adapter.notesList.remove(note)
             adapter.notifyItemRemoved(position)
             adapter.notifyItemRangeChanged(position, adapter.notesList.size)
