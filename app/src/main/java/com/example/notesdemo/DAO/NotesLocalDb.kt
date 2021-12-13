@@ -76,7 +76,7 @@ private class NotesItemsCallback(val scope: CoroutineScope) : RoomDatabase.Callb
                 Если приложение получит поддержку и будет востребованно оно обзаведётся различными возможностями по хранению данных 
                 и их переносу в сеть между Вашими устройствами.
                 Желаю приятной работы.
-            """.trimIndent(), null, Date()
+            """.trimIndent(), image = null, createDate = Date()
         )
         return initialNote
     }
