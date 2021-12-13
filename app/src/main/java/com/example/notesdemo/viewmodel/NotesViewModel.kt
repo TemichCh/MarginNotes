@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
 
     val searchQuery =  MutableLiveData("")
+    val selectionMode: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val allNotes: LiveData<List<Note>> =
         Transformations.switchMap(searchQuery) { searchText ->
@@ -29,6 +30,8 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     fun update(note: Note) = viewModelScope.launch {
         notesRep.updateNote(note)
     }
+
+    //fun onNotePressed (listener:Liste)
 
     // FIXME не нужен сам метод, как выше в комменте к лайвдате сказано. и также не нужно делать
     //  изменение значения лайвдаты внутри скоупа - корутина тут не нужна

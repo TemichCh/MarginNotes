@@ -72,7 +72,6 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         else
             note.createDate.humanizeDiff(Date())*/
         holder.itemDate.text = (note.modifiedDate?:note.createDate).humanizeDiff(Date())
-
         holder.itemText.text = note.noteText
 
         // FIXME в биндинге ВСЕГДА надо обрабатывать обе ветки условий.
@@ -94,7 +93,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
                 .into(holder.image)
         }
 
-        holder.itemView.setBackgroundColor(if (note.selected) Color.GREEN else Color.TRANSPARENT)
+      //  holder.itemView.setBackgroundColor(if (note.selected) Color.GREEN else Color.TRANSPARENT)
 
         holder.itemView.setOnClickListener {
             itemClickListener?.invoke(notesList[position])
@@ -126,7 +125,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     // FIXME эта функция не является зоной ответственности адаптера для ресайкла -
     //  тут ей не место (вообще во вьюмодели должна быть)
-    fun getSelectedList() = notesList.filter { note -> note.selected }
+   // fun getSelectedList() = notesList.filter { note -> note.selected }
 
 }
 
