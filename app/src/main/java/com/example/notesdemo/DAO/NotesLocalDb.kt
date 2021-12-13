@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
-
+//FIXME после изменения на Note.noteId = null изменилась схема БД, необходимо повысить версию и прописать переход на нее
 @Database(entities = [Note::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class NotesLocalDb : RoomDatabase() {
