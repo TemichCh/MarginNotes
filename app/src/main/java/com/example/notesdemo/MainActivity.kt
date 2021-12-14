@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             }
             deleteItem.isVisible = it
             searchItem.isVisible = !it
-            supportActionBar!!.setDisplayHomeAsUpEnabled(!it)
+            supportActionBar!!.setDisplayHomeAsUpEnabled(it)
         }
 
 
