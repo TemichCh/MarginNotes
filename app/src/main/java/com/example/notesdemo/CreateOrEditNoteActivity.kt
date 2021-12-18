@@ -3,6 +3,7 @@ package com.example.notesdemo
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -39,11 +40,11 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditNoteBinding
 
     // FIXME не по кодстайлу - компаньены в самом конце идут
-    companion object {
+   /* companion object {
         // FIXME ошибка в названии, а также эта константа должна быть приватная и не доступна для
         //  использования из вне данной активности
         const val IS_EDITE_MODE = "IS_EDITE_MODE"
-    }
+    }*/
 
     // FIXME для активности все равно должно быть на объект заметки - активность должна просто выводить
     //  все что скажет вьюмодель и ничего не додумывать, и не хранить в себе
@@ -88,10 +89,10 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         //intent.getParcelableExtra<Int?>("note").also { currentNote = it }
         // FIXME нет смысла сохранять в инстанс отдельный флаг - интент он всегда доступен, даже
         //  после пересоздания экрана - с него можно читать
-        isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
+       /* isEditMode = savedInstanceState?.getBoolean(IS_EDITE_MODE, false) ?: intent.getBooleanExtra(
             "isEdit",
             false
-        )
+        )*/
 
         // FIXME вместо выставления так данных - должна быть привязка к лайвдатам из вьюмодели,
         //  вьюхи на активити должны быть тупыми и просто получают значения от вьюмодели. а та в
@@ -194,7 +195,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(IS_EDITE_MODE, isEditMode)
+       // outState.putBoolean(IS_EDITE_MODE, isEditMode)
     }
 
     // FIXME нейминг не по кодстайлу. и логика работы с бд это ответственность вьюмодели, не ui
@@ -377,13 +378,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     }
 
 // пример как закрыть от внешнего доступа всю логику формирования intent'а по которому можно открыть экран
-//    companion object {
-//        private const val INTENT_EXTRA_NOTE = "note"
-//
-//        fun createIntent(context: Context, noteId: Int): Intent {
-//            val intent = Intent(context, EditNote::class.java)
-//            intent.putExtra(INTENT_EXTRA_NOTE, noteId)
-//            return intent
-//        }
-//    }
+    companion object {
+        private const val INTENT_EXTRA_NOTE = "note"
+
+        fun createIntent(context: Context, noteId: Int): Intent {
+            val intent = Intent(context, CreateOrEditNoteActivity::class.java)
+            intent.putExtra(INTENT_EXTRA_NOTE, noteId)
+            return intent
+        }
+    }
 }
