@@ -31,6 +31,11 @@ class NotesRepository(private val db: NotesDao) {
     //  проблема мутабельности таже
     //fixed? MutableLIst изменяемый, поэтому добавление/удаление строк не "фиксируется" т.е. при сравнении объект equals предыдущему
     // в отличии от List. При пересоздании это будет уже новый объект != предыдущему т.к. объект пересоздан
-    fun searchNotes(text:String):Flow<List<Note>> = db.searchNotes(text)
+    fun searchNotes(text: String): Flow<List<Note>> = db.searchNotes(text)
+
+    fun getNoteById(noteId: Int): Flow<Note> {
+        val noteById = db.getNoteById(noteId)
+        return noteById
+    }
 
 }

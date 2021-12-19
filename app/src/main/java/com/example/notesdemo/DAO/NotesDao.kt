@@ -27,4 +27,7 @@ interface NotesDao {
     //fixed?
     @Query("Select * from notes where noteName like '%' || :search || '%'")
     fun searchNotes(search:String): Flow<List<Note>>
+
+    @Query("select * from notes where noteId = :noteId")
+    fun getNoteById(noteId:Int):Flow<Note>
 }
