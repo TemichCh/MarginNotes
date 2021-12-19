@@ -1,9 +1,5 @@
 package com.example.notesdemo
 
-// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
-//  вообще перестать работать.
-//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import androidx.activity.viewModels
@@ -13,16 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notesdemo.adapters.NotesListAdapter
 import com.example.notesdemo.databinding.ActivityMainBinding
 import com.example.notesdemo.viewmodel.NotesViewModel
-import com.example.notesdemo.viewmodel.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    // FIXME не надо сохранять ссылки на UI элементы, это места для потенциальных ошибок с утечкой памяти
-    //  по сути элементы эти нужны только в момент настройки, поэтому сохранять их на долго нет нужды
-    //private lateinit var deleteItem: MenuItem
-    //private lateinit var searchItem: MenuItem
 
     // FIXME из-за того что выбор enabled/disabled просто свойство активити мы потеряем это значение
     //  после пересоздания активити. а это произойдет обязательно.
@@ -34,13 +24,12 @@ class MainActivity : AppCompatActivity() {
     //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
     //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
     //  логику заполнения данных
-    //fixed -> move to private
     private val adapter = NotesListAdapter()
 
     // FIXME это свойство тоже не должно быть публичным. это детали реализации конкретно этого активити
     private val notesVModel: NotesViewModel by viewModels {
-        // FIXME тут надо получение зависимостей переделать, по однмоу из вариантов описанных в NotesApplication
-        NotesViewModelFactory((application as NotesApplication).repository)
+        val repository = application.getNotesRepository()
+        return@viewModels ViewModelFactory(repository, this)
     }
 
 
@@ -60,6 +49,21 @@ class MainActivity : AppCompatActivity() {
 
         val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         binding.recyclerviewNotes.addItemDecoration(divider)
+
+        //test
+        /*lifecycle.addObserver(LifecycleEventObserver { source: LifecycleOwner, event: Lifecycle.Event ->
+            notesVModel.onNotePressed(event.name)
+        })*/
+
+        adapter.setOnNoteTapListener {
+            val noteId = it.noteId
+            if (noteId != null) notesVModel.onNotePressed(this, noteId)
+        }
+
+        adapter.onNoteLongClickListener {
+            val noteId = it.noteId
+            if (noteId != null) notesVModel.onNoteLongClick(this, noteId)
+        }
 
 
         /*
@@ -117,14 +121,10 @@ class MainActivity : AppCompatActivity() {
         //fixed ?
         val fab = binding.fabMainAddNote
         fab.setOnClickListener {
-            // FIXME также как я выше говорил - надо чтобы формирование интента было не тут а
-            //  в companion object'е активити которую открываем. и никаких хардкод строк в ключах
-            //  интента не должно быть
-            val intent = Intent(this@MainActivity, CreateOrEditNoteActivity::class.java)
-            intent.putExtra("isEdit", true)
-            startActivity(intent)
+            startActivity(CreateOrEditNoteActivity.createIntent(this@MainActivity, 0))
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
@@ -135,10 +135,10 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu.findItem(R.id.action_search)
 
         notesVModel.selectionMode.observe(this) {
-            if (it) {
-                title = "0" // временно adapter.getSelectedList().size.toString()
+            title = if (it) {
+                notesVModel.selectedNotes.value?.size.toString()
             } else {
-                title = resources.getString(R.string.app_name)
+                resources.getString(R.string.app_name)
             }
             deleteItem.isVisible = it
             searchItem.isVisible = !it
@@ -180,22 +180,6 @@ class MainActivity : AppCompatActivity() {
      } else {
          setDeleteToolBar()
      }
- }*/
-
-    // FIXME должно выставляться это на основании подписки на лайвдату selectedMode из вьюмодели
-/* private fun setDefaultToolbar() {
-     title = resources.getString(R.string.app_name)
-     binding.mainActivityToolbar.menu.findItem().isVisible = false
-     searchItem.isVisible = true
-     supportActionBar!!.setDisplayHomeAsUpEnabled(false)
- }
-
- // FIXME должно выставляться это на основании подписки на лайвдату selectedMode из вьюмодели
- private fun setDeleteToolBar() {
-     title = adapter.getSelectedList().size.toString()
-     deleteItem.isVisible = true
-     searchItem.isVisible = false
-     supportActionBar!!.setDisplayHomeAsUpEnabled(true)
  }*/
 
     // FIXME это логика вьюмодели уже, она должна менять данные а UI просто обновится после
