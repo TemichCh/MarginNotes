@@ -33,6 +33,10 @@ class NotesApplication:Application() {
 
 }
 
+fun Application.getNotesRepository(): NotesRepository {
+    return (this as NotesApplication).repository
+}
+
 // вариант с экстеншен функцией
 
 //fun Application.getNotesRepository(): NotesRepository {
