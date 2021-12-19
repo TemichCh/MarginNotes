@@ -2,10 +2,10 @@ package com.example.notesdemo.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.notesdemo.DAO.NotesRepository
 import com.example.notesdemo.model.Note
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel() {
@@ -20,9 +20,9 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
 
     private var isNoteLoaded = false
 
-    fun load(noteId: Int?) {
+    fun load(noteId: Int) {
         this.noteId = noteId
-        if (noteId == null) {
+        if (noteId == 0) {
             isNewNote = true
             return
         }
@@ -33,18 +33,16 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         isNewNote = false
 
         viewModelScope.launch {
-            val result = notesRep.getNoteById(noteId).asLiveData()
-            val note = result.value
-            if (note != null) {
-                onNoteLoaded(note)
-            } else {
-                onDataNotAvailable()
+            notesRep.getNoteById(noteId).map { note ->
+                if (note != null) onNoteLoaded(note) else onDataNotAvailable()
             }
+
         }
     }
 
     private fun onDataNotAvailable() {
-        TODO("Not yet implemented")
+        //Toast.makeText(, s, Toast.LENGTH_LONG).show()
+        println("****** no data available")
     }
 
 
@@ -52,6 +50,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         noteName.value = note.noteName
         noteText.value = note.noteText
         noteImage.value = note.image
+        isNoteLoaded = true
     }
 
 
