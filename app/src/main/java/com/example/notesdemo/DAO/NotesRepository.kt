@@ -1,7 +1,6 @@
 // FIXME имя пакета не соответствует кодстайлу
 package com.example.notesdemo.DAO
 
-import androidx.annotation.WorkerThread
 import com.example.notesdemo.model.Note
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +11,7 @@ class NotesRepository(private val db: NotesDao) {
     val allNotes:Flow<List<Note>> = db.gelAllNotes()
 
     @Suppress("RedundantSuspendModifier")
-    @WorkerThread
+    //@WorkerThread
     suspend fun insertNote(note:Note){
         db.insertNote(note)
     }
