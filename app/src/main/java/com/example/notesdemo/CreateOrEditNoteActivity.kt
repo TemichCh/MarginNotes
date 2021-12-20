@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -69,7 +70,6 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
-
         editNoteViewModel.load(noteId)
 
         editNoteViewModel.noteName.observe(this) { name ->
@@ -130,14 +130,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_menu, menu)
-        // showCurrentMode(isEditMode)
         return true
     }
 
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
             // FIXME должны просто оповещать вьюмодель, а она уже действовать
-            if (isEditMode) {
+            /*if (isEditMode) {
                 InsertUpdateNote()
 
                 finish()
@@ -145,10 +144,11 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             // FIXME вроде тут нету логики переключения режимов же, или есть возможность включать
             //  выключать редактирование?
             isEditMode = !isEditMode
-            showCurrentMode(isEditMode)
+            showCurrentMode(isEditMode)*/
+            editNoteViewModel.saveNote()
             true
         }
-        R.id.menu_delete -> {
+        /*R.id.menu_delete -> {
             // FIXME должны просто оповещать вьюмодель, а она уже действовать
             if (isEditMode) {
                 currentNote?.let {
@@ -168,18 +168,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             isEditMode = !isEditMode
             showCurrentMode(isEditMode)
             true
-        }
+        }*/
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
             super.onOptionsItemSelected(item)
         }
 
-    }*/
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // outState.putBoolean(IS_EDITE_MODE, isEditMode)
     }
 
     // FIXME нейминг не по кодстайлу. и логика работы с бд это ответственность вьюмодели, не ui
