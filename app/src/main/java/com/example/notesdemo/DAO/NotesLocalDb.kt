@@ -11,6 +11,7 @@ import com.example.notesdemo.model.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.Executors
 
 //FIXME после изменения на Note.noteId = null изменилась схема БД, необходимо повысить версию и прописать переход на нее
 @Database(entities = [Note::class], version = 1)
@@ -29,6 +30,9 @@ abstract class NotesLocalDb : RoomDatabase() {
                     context.applicationContext,
                     NotesLocalDb::class.java, "notesLocal.db"
                 ).addCallback(NotesItemsCallback(scope))
+                    .setQueryCallback({ sqlQuery, bindArgs ->
+                        println("SQL Query: $sqlQuery SQL Args: $bindArgs")
+                    }, Executors.newSingleThreadExecutor())
                     .build()
 
                 INSTANCE = instance
