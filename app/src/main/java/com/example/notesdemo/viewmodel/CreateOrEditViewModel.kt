@@ -2,16 +2,16 @@ package com.example.notesdemo.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.notesdemo.DAO.NotesRepository
 import com.example.notesdemo.model.Note
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
 class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel() {
 
-    private var noteId: Int? = null
+    private var _noteId: Int? = null
 
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
@@ -25,7 +25,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     private var isNoteLoaded = false
 
     fun load(noteId: Int) {
-        this.noteId = noteId
+        this._noteId = noteId
         if (noteId == 0) {
             isNewNote = true
             return
@@ -37,8 +37,14 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         isNewNote = false
 
         viewModelScope.launch {
-            val note = notesRep.getNoteById(noteId).asLiveData().value
-            if (note != null) onNoteLoaded(note) else onDataNotAvailable()
+            notesRep.getNoteById(noteId).collect { note ->
+                //FIXME Переделать на catch т.к. note always not null
+                if (note != null) {
+                    onNoteLoaded(note)
+                } else {
+                    onDataNotAvailable()
+                }
+            }
         }
     }
 
@@ -68,7 +74,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         }
 
 
-        val currentNoteId = noteId
+        val currentNoteId = _noteId
         if (isNewNote && currentNoteId == null) {
             insertNote(Note(noteName = currentName, noteText = currenText, createDate = Date()))
         } else {
