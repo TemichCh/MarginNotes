@@ -3,8 +3,6 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    // FIXME андроид экстеншены уже deprecated - https://habr.com/ru/post/526192/ надо избавиться
-    //id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 
 }
@@ -43,39 +41,37 @@ android {
 }
 
 dependencies {
-    // FIXME лучше сразу делать для всех зависимостей выделение версии, это упростит работу с
-    //  множеством зависимостей и даст централизованное версионирование
-    // TODO как задачка со звездочкой - подключить gradle version catalog и через него все зависимости указать
+    // как задачка со звездочкой - подключить gradle version catalog и через него все зависимости указать
     //  материалы тут - https://kmm.icerock.dev/learning/gradle/version-catalogs
-    def roomVersion = "2.3.0"
-    def lifecycleVersion = '2.4.0'
-    def glide_version = "4.12.0"
-
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation "androidx.activity:activity-ktx:1.4.0"
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation(libs.core.ktx)
+    implementation(libs.activity.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
     //room
-    implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
-    implementation "androidx.room:room-ktx:$roomVersion"
-
+    implementation(libs.room.runtime)//"androidx.room:room-runtime:$roomVersion"
+    kapt(libs.room.compiler)//"androidx.room:room-compiler:$roomVersion"
+    implementation(libs.room.ktx)//"androidx.room:room-ktx:$roomVersion"
+    //test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //coroutines
-    // FIXME надо задуматься о вопросе - почему тут api а не implementation? материалы есть тут -
+    // надо задуматься о вопросе - почему тут api а не implementation? материалы есть тут -
     //  https://kmm.icerock.dev/learning/gradle/configuration
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
+    //Тип зависимости api используется как во время компиляции, так и во время выполнения и экспортируется пользователям библиотек.
+    //Зависимость с конфигурацией implementation, с помощью которой мы подключили LibA к LibB,
+    // используется во время компиляции и во время выполнения для текущего модуля,
+    // но не предоставляется для компиляции других модулей
+    api(libs.coroutines.core)
+    api(libs.coroutines.android)
 
     // Lifecycle components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+    implementation(libs.viewmodel.ktx)
+    implementation(libs.livedata.ktx)
+    implementation(libs.common.java8)
     //Glide for image loading
-    implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation(libs.glide)
 
 }
