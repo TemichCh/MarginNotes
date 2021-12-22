@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
 import java.util.*
@@ -34,38 +35,14 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     //  https://kotlinlang.org/docs/delegated-properties.html#lazy-properties
 //    var isEditMode = false
 
-
-    // FIXME тут нам нужно не вьюмодель списка а свою вьюмодель создания и редактирования, в которму
-    //  мы сразу в конструктор передаем id заметки из intent (случай редактирования) - эта вьюмодель
-    //  должна управлять логикой экрана
     private val editNoteViewModel: CreateOrEditViewModel by viewModels {
         val repository = application.getNotesRepository()
         return@viewModels ViewModelFactory(repository, this)
     }
 
-
-    // FIXME это точно не var - это val. и имя надо исправить у переменной - не информативное
-    /*private var resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // FIXME обработчик получения данных нужно в отдельную функцию выделить и
-                //  там реализовать всю логику по чтению изображения по полученному uri и сохранению
-                //  в данные приложения
-                val data: Intent? = result.data
-                val selectedImageUri: Uri? = data?.data
-                if (null != selectedImageUri) {
-                    binding.notesImage.setTag(selectedImageUri.toString())
-                    binding.notesImage.setImageURI(selectedImageUri)
-                }
-            }
-        }
-*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // FIXME вместо выставления так данных - должна быть привязка к лайвдатам из вьюмодели,
-        //  вьюхи на активити должны быть тупыми и просто получают значения от вьюмодели. а та в
-        //  свою очередь получит все данные с бд и выставит в лайвдаты
+
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -80,14 +57,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             binding.notesText.setText(text)
         }
 
-
-        /* currentNote?.let {
-             binding.notesName.setText(it.noteName)
-             binding.notesText.setText(it.noteText)
-             if (it.image != null) {
-                 openMediaStore()
-             }
-         }*/
+        editNoteViewModel.noteImage.observe(this) {
+            Glide.with(this)
+                .load(it)
+                .thumbnail(0.33f)
+                .centerCrop()
+                .into(binding.notesImage)
+        }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -96,23 +72,17 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         fabClearImageOnClick()
     }
 
-
     private fun fabClearImageOnClick() {
-        val fabClearImage =
-            binding.fabEditClearImage //findViewById<FloatingActionButton>(R.id.fab_edit_clear_image)
-        // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
-        //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
-        /*fabClearImage.setOnClickListener {
+        val fabClearImage = binding.fabEditClearImage
+        fabClearImage.setOnClickListener {
             // FIXME тут мы должны вызвать обработчик во вьюмодели, там очистится лайвдата и в свою
             //  очередь сработает подписка ui на эту лайвдату и изображение уберется
-            currentNote?.image = null
-            Glide.with(binding.notesImage).clear(binding.notesImage)
-        }*/
+            editNoteViewModel.noteImage.value = ""
+        }
     }
 
     private fun fabAddImageOnClick() {
-        val fabAddImage =
-            binding.fabEditAddImage //findViewById<FloatingActionButton>(R.id.fab_edit_add_image)
+        val fabAddImage = binding.fabEditAddImage
         // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
         //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
 //        fabAddImage.setOnClickListener {
@@ -157,8 +127,6 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                     if (it.image != null) {
                         openMediaStore()
                     }
-                } ?: kotlin.run {
-                    // FIXME зачем тут run?
                 }
             } else
                 if (currentNote != null) {
@@ -176,37 +144,6 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         }
 
     }
-
-    // FIXME нейминг не по кодстайлу. и логика работы с бд это ответственность вьюмодели, не ui
-    //  должен все эти данные готовить
-    /* private fun InsertUpdateNote() {
-         if (currentNote == null) {
-             val newNote = Note(
-                 noteName = binding.notesName.text.toString(),
-                 noteText = binding.notesText.text.toString(),
-                 image = if (binding.notesImage.tag != null) {
-                     binding.notesImage.getTag().toString()
-                 } else null,
-                 createDate = Date()
-             )
-             notesVModel.insert(newNote)
-             currentNote = newNote
-             Toast.makeText(this, R.string.insert_note, Toast.LENGTH_LONG).show()
-         } else {
-             if (currentNote != null) {
-                 //currentNote.also { note ->
-                 currentNote!!.noteName = binding.notesName.text.toString()
-                 currentNote!!.noteText = binding.notesText.text.toString()
-                 currentNote!!.createDate = currentNote!!.createDate
-                 if (binding.notesImage.tag != null)
-                     currentNote!!.image = binding.notesImage.getTag().toString()
-                 currentNote!!.modifiedDate = Date()
-                 //}
-                 notesVModel.update(currentNote!!)
-                 Toast.makeText(this, R.string.update_note, Toast.LENGTH_SHORT).show()
-             }
-         }
-     }*/
 
     // FIXME вместо замут с запросом разрешения и добавления своего обработчика стоит использовать
     //  современное API из Activity Result API
