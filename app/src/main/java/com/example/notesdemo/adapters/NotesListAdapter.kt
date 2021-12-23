@@ -1,12 +1,6 @@
 package com.example.notesdemo.adapters
 
-// FIXME нужно убрать использование синтетиков, их развитие остановлено и в любой момент они могут
-//  вообще перестать работать.
-//  Равноценная замена будет - https://developer.android.com/topic/libraries/view-binding
-//import kotlinx.android.synthetic.main.activity_edit_note.*
-//import kotlinx.android.synthetic.main.notes_list_item.view.*
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -51,7 +45,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
         val layouyInflater =
-            LayoutInflater.from(parent.context)//.inflate(R.layout.notes_list_item, parent, false)
+            LayoutInflater.from(parent.context)
         val itemBinding = NotesListItemBinding.inflate(layouyInflater, parent, false)
         return NotesViewHolder(itemBinding)
 
@@ -63,14 +57,6 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         val note = notesList[position]
         holder.itemName.text = note.noteName
 
-            /*if (note.modifiedDate != null)
-            // FIXME вместо форскаста лучше заиспользовать конструкцию
-            //  (note.modifiedDate ?? note.createDate).humanizeDiff(Date())
-            //  это будет более надежный вариант, защищенный от ошибок модификации кода
-            //  (если в текущем коде изменить условие но не изменить тело - можем получить креш на форскасте)
-            note.modifiedDate!!.humanizeDiff(Date())
-        else
-            note.createDate.humanizeDiff(Date())*/
         holder.itemDate.text = (note.modifiedDate?:note.createDate).humanizeDiff(Date())
         holder.itemText.text = note.noteText
 
@@ -105,7 +91,6 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         }
 
     }
-
 
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
