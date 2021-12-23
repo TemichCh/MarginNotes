@@ -3,7 +3,7 @@ package com.example.notesdemo.viewmodel
 import android.content.Context
 import androidx.lifecycle.*
 import com.example.notesdemo.CreateOrEditNoteActivity
-import com.example.notesdemo.DAO.NotesRepository
+import com.example.notesdemo.dao.NotesRepository
 import com.example.notesdemo.model.Note
 import kotlinx.coroutines.launch
 

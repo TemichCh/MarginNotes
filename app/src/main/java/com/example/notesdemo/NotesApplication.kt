@@ -1,8 +1,8 @@
 package com.example.notesdemo
 
 import android.app.Application
-import com.example.notesdemo.DAO.NotesLocalDb
-import com.example.notesdemo.DAO.NotesRepository
+import com.example.notesdemo.dao.NotesLocalDb
+import com.example.notesdemo.dao.NotesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 

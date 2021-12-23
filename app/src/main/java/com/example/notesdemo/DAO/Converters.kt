@@ -1,5 +1,4 @@
-// FIXME имя пакета не соответствует кодстайлу
-package com.example.notesdemo.DAO
+package com.example.notesdemo.dao
 
 import androidx.room.TypeConverter
 import java.util.*

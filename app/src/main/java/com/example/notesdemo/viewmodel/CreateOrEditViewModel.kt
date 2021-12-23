@@ -3,7 +3,7 @@ package com.example.notesdemo.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.notesdemo.DAO.NotesRepository
+import com.example.notesdemo.dao.NotesRepository
 import com.example.notesdemo.model.Note
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

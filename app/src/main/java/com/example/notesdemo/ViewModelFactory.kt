@@ -5,7 +5,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.example.notesdemo.DAO.NotesRepository
+import com.example.notesdemo.dao.NotesRepository
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
 import com.example.notesdemo.viewmodel.NotesViewModel
 
