@@ -14,12 +14,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // FIXME из-за того что выбор enabled/disabled просто свойство активити мы потеряем это значение
-    //  после пересоздания активити. а это произойдет обязательно.
-    //  стоит почитать блок в андроид доке - https://developer.android.com/guide/topics/resources/runtime-changes?hl=en
-    //  рекомендация моя - унести состояние в ViewModel
-    //private var selectionModeEnabled = false
-
     // FIXME это свойство точно не должно быть публичным. никто снаружи этого класса не должен знать
     //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
     //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
