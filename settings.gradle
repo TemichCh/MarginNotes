@@ -9,7 +9,7 @@ dependencyResolutionManagement {
     enableFeaturePreview('VERSION_CATALOGS')
     versionCatalogs {
         create("libs") {
-            version("roomVersion", "2.3.0")
+            version("roomVersion", "2.4.0")
             version("lifecycleVersion", "2.4.0")
             version("glideVersion", "4.12.0")
             version("core-ktx", "1.7.0")
