@@ -64,17 +64,3 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     }
 
 }
-
-// FIXME вместо фиксированной фабрики можно сделать класс общего назначения (с Generic), который
-//  принимает лямбду создающую нужный тип вьюмодели и тогда использование будет
-//  LambdaViewModelFactory { NotesViewModel(notesRepo) }
-//  и из этого файла данную фабрику надо будет вынести
-//class NotesViewModelFactory(private val notesRep: NotesRepository) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(NotesViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return NotesViewModel(notesRep) as T
-//        }
-//        throw IllegalArgumentException("Unknown VieModel Class")
-//    }
-//}
