@@ -28,7 +28,7 @@ class NotesApplication:Application() {
     //  но все приложение будет завязано на эту функцию, а не в каждом месте будет каст.
     // TODO для знакомство с более общепринятым подходмо внедрения зависимостей -
     //  надо заинтегрировать Hilt https://developer.android.com/training/dependency-injection/hilt-android
-    val repository by lazy { NotesRepository(database.LocalNotesDao()) }
+    val repository by lazy { NotesRepository(database.localNotesDao()) }
 
 
 }
