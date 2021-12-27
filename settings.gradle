@@ -43,9 +43,9 @@ dependencyResolutionManagement {
             alias("coroutines-android").to("org.jetbrains.kotlinx", "kotlinx-coroutines-android").versionRef("coroutines")
 
             //test not working (
-            //alias("junit","junit").versionRef("junit")
-            //alias("androidx.test.ext","junit").versionRef("ext-junit")
-            //alias("androidx.test.espresso","espresso-core").versionRef("espresso-core")
+            alias("junit").to("junit","junit").versionRef("junit")
+            alias("ext-junit").to("androidx.test.ext","junit").versionRef("ext-junit")
+            alias("espresso-core").to("androidx.test.espresso","espresso-core").versionRef("espresso-core")
         }
     }
 }
