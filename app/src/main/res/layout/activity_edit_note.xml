@@ -1,81 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CreateOrEditNoteActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <data>
+<variable
+    name="viewModel"
+    type="com.example.notesdemo.viewmodel.CreateOrEditViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".CreateOrEditNoteActivity">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_edit_note"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            >
-
-        </androidx.appcompat.widget.Toolbar>
-        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-        <!--android:background="?attr/colorPrimary"-->
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_edit_note"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+            </androidx.appcompat.widget.Toolbar>
+            <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+            <!--android:background="?attr/colorPrimary"-->
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_edit_note">
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-            <EditText
-                android:id="@+id/notes_name"
-                style="@style/Profile.EditText.Single"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="@dimen/spacing_normal_16"
-                android:layout_marginTop="@dimen/spacing_normal_16"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="@dimen/spacing_normal_16"
-                android:autofillHints="false"
-                android:hint="@string/text_view_name"
-                android:inputType="text"
-                android:minHeight="48dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_edit_note">
 
-            <EditText
-                android:id="@+id/notes_text"
-                style="@style/Profile.EditText.Multiline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/spacing_normal_16"
-                android:ems="10"
-                android:gravity="start|top"
-                android:hint="@string/multi_line_txt_desc"
-                android:imeActionLabel="@string/multi_line_txt_desc"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notes_name"
-                tools:ignore="LabelFor"
-                tools:text="
+                <EditText
+                    android:id="@+id/notes_name"
+                    style="@style/Profile.EditText.Single"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="@dimen/spacing_normal_16"
+                    android:layout_marginTop="@dimen/spacing_normal_16"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="@dimen/spacing_normal_16"
+                    android:autofillHints="false"
+                    android:text="@={viewModel.noteName}"
+                    android:hint="@string/text_view_name"
+                    android:inputType="text"
+                    android:minHeight="48dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/notes_text"
+                    style="@style/Profile.EditText.Multiline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/spacing_normal_16"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="@string/multi_line_txt_desc"
+                    android:imeActionLabel="@string/multi_line_txt_desc"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine"
+                    android:text="@={viewModel.noteText}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/notes_name"
+                    tools:ignore="LabelFor"
+                    tools:text="
             Перед Вами простое приложение для создания заметок.
             Это могут быть различные записи которые Вы хотели бы сохранить в Вашем телефоне.
             Записи могут содержать Заголовок, Текст и Изображение из Вашей галереи.
@@ -85,52 +94,53 @@
             Желаю приятной работы.
             " />
 
-            <ImageView
-                android:transitionName="@string/transition_image_view"
-                android:id="@+id/notes_image"
-                android:layout_width="383dp"
-                android:layout_height="303dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="@string/image_view_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notes_text"
-                tools:srcCompat="@tools:sample/avatars" />
+                <ImageView
+                    android:id="@+id/notes_image"
+                    android:layout_width="383dp"
+                    android:layout_height="303dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="@string/image_view_image"
+                    android:transitionName="@string/transition_image_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/notes_text"
+                    tools:srcCompat="@tools:sample/avatars" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+        </ScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_edit_add_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_normal_16"
-        android:clickable="true"
-        android:contentDescription="@string/fab_edit_addimage"
-        android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@id/fab_edit_clear_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_image_search" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_edit_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/spacing_normal_16"
+            android:clickable="true"
+            android:contentDescription="@string/fab_edit_addimage"
+            android:focusable="true"
+            app:layout_constraintBottom_toTopOf="@id/fab_edit_clear_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_image_search" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_edit_clear_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_normal_16"
-        android:clickable="true"
-        android:contentDescription="@string/fab_edit_clearimage"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_image_clear" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_edit_clear_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/spacing_normal_16"
+            android:clickable="true"
+            android:contentDescription="@string/fab_edit_clearimage"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_image_clear" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

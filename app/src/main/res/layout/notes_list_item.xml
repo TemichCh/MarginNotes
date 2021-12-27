@@ -5,59 +5,67 @@
     android:background="@android:color/white"
     android:orientation="vertical"-->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/item_size"
-    android:background="@android:color/white"
-    android:padding="@dimen/spacing_small_8">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
 
-    <ImageView
-        android:transitionName="@string/transition_image_view"
-        android:id="@+id/iv_has_image"
-        android:layout_width="@dimen/avatar_item_size"
-        android:layout_height="@dimen/avatar_item_size"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/spacing_small_8"
-        tools:srcCompat="@tools:sample/avatars" />
+    </data>
 
-    <TextView
-        android:id="@+id/list_item_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/color_gray_dark"
-        android:textSize="11sp"
-        tools:text="10:00" />
-
-    <TextView
-        android:id="@+id/list_item_name"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/list_item_date"
-        android:layout_toLeftOf="@id/list_item_date"
-        android:layout_toEndOf="@+id/iv_has_image"
-        android:layout_toRightOf="@+id/iv_has_image"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/color_primary"
-        android:textSize="14sp"
-        tools:text="title name" />
+        android:layout_height="@dimen/item_size"
+        android:background="@android:color/white"
+        android:padding="@dimen/spacing_small_8">
 
-    <TextView
-        android:id="@+id/list_item_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_name"
-        android:layout_toEndOf="@id/iv_has_image"
-        android:layout_toRightOf="@+id/iv_has_image"
-        android:textColor="@color/color_gray_dark"
-        android:textSize="14sp"
-        tools:text="text content" />
-    <!--/LinearLayout-->
-</RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_has_image"
+            android:layout_width="@dimen/avatar_item_size"
+            android:layout_height="@dimen/avatar_item_size"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/spacing_small_8"
+            android:transitionName="@string/transition_image_view"
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/image_view_image"
+            />
+
+        <TextView
+            android:id="@+id/list_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/color_gray_dark"
+            android:textSize="11sp"
+            tools:text="10:00" />
+
+        <TextView
+            android:id="@+id/list_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/list_item_date"
+            android:layout_toLeftOf="@id/list_item_date"
+            android:layout_toEndOf="@+id/iv_has_image"
+            android:layout_toRightOf="@+id/iv_has_image"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/color_primary"
+            android:textSize="14sp"
+            tools:text="title name" />
+
+        <TextView
+            android:id="@+id/list_item_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_name"
+            android:layout_toEndOf="@id/iv_has_image"
+            android:layout_toRightOf="@+id/iv_has_image"
+            android:textColor="@color/color_gray_dark"
+            android:textSize="14sp"
+            tools:text="text content" />
+        <!--/LinearLayout-->
+    </RelativeLayout>
+</layout>
