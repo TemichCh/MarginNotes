@@ -75,8 +75,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
 
 
         val currentNoteId = _noteId
-
-        if (isNewNote && currentNoteId == 0) {
+        if (isNewNote && currentNoteId == null) {
             insertNote(Note(noteName = currentName, noteText = currenText, createDate = Date()))
         } else {
             val note = Note(

@@ -15,7 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
@@ -44,16 +43,13 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_note)
-        binding.lifecycleOwner = this
-        binding.viewModel = editNoteViewModel
-        //binding = ActivityEditNoteBinding.inflate(layoutInflater)
-        //setContentView(binding.root)
+        binding = ActivityEditNoteBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
         editNoteViewModel.load(noteId)
 
-        /*editNoteViewModel.noteName.observe(this) { name ->
+        editNoteViewModel.noteName.observe(this) { name ->
             binding.notesName.setText(name)
         }
 
@@ -67,7 +63,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                 .thumbnail(0.33f)
                 .centerCrop()
                 .into(binding.notesImage)
-        }*/
+        }
 
         setSupportActionBar(findViewById(R.id.toolbar_edit_note))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -120,7 +116,6 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             isEditMode = !isEditMode
             showCurrentMode(isEditMode)*/
             editNoteViewModel.saveNote()
-            finish()
             true
         }
         /*R.id.menu_delete -> {

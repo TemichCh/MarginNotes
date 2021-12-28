@@ -11,7 +11,7 @@ android {
     compileSdk 31
 
     buildFeatures{
-        dataBinding true
+        viewBinding true
     }
 
     defaultConfig {
