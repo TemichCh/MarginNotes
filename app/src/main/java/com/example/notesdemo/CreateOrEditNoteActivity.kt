@@ -15,8 +15,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
+import com.example.notesdemo.utils.bindTwoWayToEditTextText
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
 import java.util.*
 
@@ -49,13 +51,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
         editNoteViewModel.load(noteId)
 
-        editNoteViewModel.noteName.observe(this) { name ->
-            binding.notesName.setText(name)
-        }
-
-        editNoteViewModel.noteText.observe(this) { text ->
-            binding.notesText.setText(text)
-        }
+        editNoteViewModel.noteName.bindTwoWayToEditTextText(this,binding.notesName)
+        editNoteViewModel.noteText.bindTwoWayToEditTextText(this,binding.notesText)
 
         editNoteViewModel.noteImage.observe(this) {
             Glide.with(this)
@@ -116,6 +113,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             isEditMode = !isEditMode
             showCurrentMode(isEditMode)*/
             editNoteViewModel.saveNote()
+            finish()
             true
         }
         /*R.id.menu_delete -> {
