@@ -2,6 +2,7 @@ package com.example.notesdemo
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.utils.bindTwoWayToEditTextText
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
+import java.io.File
 import java.util.*
 
 
@@ -41,6 +44,27 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         return@viewModels ViewModelFactory(repository, this)
     }
 
+    private val getImageSelectResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                //TODO generate file name
+                //https://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
+                val resolver = applicationContext.contentResolver
+                val uri = result.data?.data
+                if (uri != null) {
+                    val file = File(applicationContext.filesDir, "test")
+                    resolver.openInputStream(uri).use { stream ->
+                        val bytes = stream?.readBytes()
+                        applicationContext.openFileOutput(file.name, Context.MODE_PRIVATE).use {
+                            it.write(bytes)
+                        }
+                    }
+                    editNoteViewModel.noteImage.value = file.path
+                }
+            }
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,21 +72,24 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
-        editNoteViewModel.load(noteId)
+        with(editNoteViewModel) {
+            load(noteId)
 
-        editNoteViewModel.isEditMode.observe(this){
-            showCurrentMode(it)
-        }
-        editNoteViewModel.noteName.bindTwoWayToEditTextText(this,binding.notesName)
-        editNoteViewModel.noteText.bindTwoWayToEditTextText(this,binding.notesText)
+            isEditMode.observe(this@CreateOrEditNoteActivity) {
+                showCurrentMode(it)
+            }
+            noteName.bindTwoWayToEditTextText(this@CreateOrEditNoteActivity, binding.notesName)
+            noteText.bindTwoWayToEditTextText(this@CreateOrEditNoteActivity, binding.notesText)
 
-        editNoteViewModel.noteImage.observe(this) {
-            Glide.with(this)
-                .load(it)
-                .thumbnail(0.33f)
-                .centerCrop()
-                .into(binding.notesImage)
+            noteImage.observe(this@CreateOrEditNoteActivity) {
+                Glide.with(this@CreateOrEditNoteActivity)
+                    .load(it)
+                    .thumbnail(0.33f)
+                    .centerCrop()
+                    .into(binding.notesImage)
+            }
         }
+
 
         setSupportActionBar(binding.toolbarEditNote)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -84,17 +111,17 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         val fabAddImage = binding.fabEditAddImage
         // FIXME обработчик нажатия надо в отдельную функцию выносить чтобы onCreate не раздувать и
         //  его можно было прочитать нормально не отвлекаясь на другие контексты деталей
-//        fabAddImage.setOnClickListener {
-//            val intent = Intent()
-//            intent.type = "image/*"
-//            intent.action = Intent.ACTION_GET_CONTENT
-//            resultLauncher.launch(
-//                Intent.createChooser(
-//                    intent,
-//                    getString(R.string.selectPictureTitle)
-//                )
-//            )
-//        }
+        fabAddImage.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            getImageSelectResult.launch(
+                Intent.createChooser(
+                    intent,
+                    getString(R.string.selectPictureTitle)
+                )
+            )
+        }
     }
 
 
@@ -257,30 +284,33 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             }
         }
 
-        binding.fabEditAddImage.isVisible = (isEdit && !editNoteViewModel.noteImage.value.isNullOrBlank())
+        with(binding) {
+            val isImageSet = editNoteViewModel.noteImage.value.isNullOrBlank()
+            fabEditAddImage.isVisible = (isEdit && isImageSet)
 
-        binding.toolbarEditNote.menu?.findItem(R.id.menu_save)?.apply {
-            //TODO заменить на отдельный пункт меню?
-            val icon = if (isEdit) {
-                R.drawable.ic_outline_done_24
-            } else {
-                R.drawable.ic_outline_edit_24
-            }
-            setIcon(
-                ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon)
-            )
-        }
+            fabEditClearImage.isVisible = (isEdit && ! isImageSet)
 
-        binding.toolbarEditNote.menu?.findItem(R.id.menu_delete)?.apply {
-            //TODO заменить на отдельный пункт меню?
-            val icon = if (isEdit) {
-                R.drawable.ic_outline_cancel_24
-            } else {
-                R.drawable.ic_outline_delete_24
+            toolbarEditNote.menu?.findItem(R.id.menu_save)?.apply {
+                //TODO заменить на отдельный пункт меню?
+                val icon = if (isEdit) {
+                    R.drawable.ic_outline_done_24
+                } else {
+                    R.drawable.ic_outline_edit_24
+                }
+                setIcon(ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon))
             }
-            setIcon(
-                ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon)
-            )
+
+            toolbarEditNote.menu?.findItem(R.id.menu_delete)?.apply {
+                //TODO заменить на отдельный пункт меню?
+                val icon = if (isEdit) {
+                    R.drawable.ic_outline_cancel_24
+                } else {
+                    R.drawable.ic_outline_delete_24
+                }
+                setIcon(
+                    ContextCompat.getDrawable(this@CreateOrEditNoteActivity, icon)
+                )
+            }
         }
     }
 
