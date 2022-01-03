@@ -15,7 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.utils.bindTwoWayToEditTextText
@@ -51,6 +50,9 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
         editNoteViewModel.load(noteId)
 
+        editNoteViewModel.isEditMode.observe(this){
+            showCurrentMode(it)
+        }
         editNoteViewModel.noteName.bindTwoWayToEditTextText(this,binding.notesName)
         editNoteViewModel.noteText.bindTwoWayToEditTextText(this,binding.notesText)
 
@@ -62,7 +64,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                 .into(binding.notesImage)
         }
 
-        setSupportActionBar(findViewById(R.id.toolbar_edit_note))
+        setSupportActionBar(binding.toolbarEditNote)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         fabAddImageOnClick()
@@ -95,6 +97,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 //        }
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_menu, menu)
         return true
@@ -102,18 +105,9 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
-            // FIXME должны просто оповещать вьюмодель, а она уже действовать
-            /*if (isEditMode) {
-                InsertUpdateNote()
-
+            if (editNoteViewModel.saveNote()){
                 finish()
             }
-            // FIXME вроде тут нету логики переключения режимов же, или есть возможность включать
-            //  выключать редактирование?
-            isEditMode = !isEditMode
-            showCurrentMode(isEditMode)*/
-            editNoteViewModel.saveNote()
-            finish()
             true
         }
         /*R.id.menu_delete -> {
@@ -263,8 +257,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             }
         }
 
-        binding.fabEditAddImage.isVisible = isEdit
-        //binding.fabEditClearImage.isVisible = (isEdit && currentNote?.image != null)
+        binding.fabEditAddImage.isVisible = (isEdit && !editNoteViewModel.noteImage.value.isNullOrBlank())
 
         binding.toolbarEditNote.menu?.findItem(R.id.menu_save)?.apply {
             //TODO заменить на отдельный пункт меню?

@@ -13,6 +13,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
 
     private var _noteId: Int? = null
 
+    val isEditMode = MutableLiveData(false)
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
     val noteImage = MutableLiveData<String?>()
@@ -28,6 +29,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         this._noteId = noteId
         if (noteId == 0) {
             isNewNote = true
+            isEditMode.value = true
             return
         }
         if (isNoteLoaded) {
@@ -64,13 +66,18 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     }
 
 
-    fun saveNote() {
+    fun saveNote():Boolean  {
+        if (isEditMode.value == false){
+            isEditMode.value=true
+            return false
+        }
+
         val currentName = noteName.value
         val currenText = noteText.value
         val currCreateDate = createDate.value
 
         if (currentName == null || currenText == null) {
-            return
+            return false
         }
 
 
@@ -87,6 +94,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
             )
             updateNote(note)
         }
+        return true
     }
 
     fun insertNote(note: Note) = viewModelScope.launch {
