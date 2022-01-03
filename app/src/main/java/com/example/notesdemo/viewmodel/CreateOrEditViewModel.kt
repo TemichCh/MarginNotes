@@ -16,7 +16,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     val isEditMode = MutableLiveData(false)
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
-    val noteImage = MutableLiveData<String?>()
+    val noteImage = MutableLiveData<String?>(null)
     val createDate = MutableLiveData<Date>()
     val modifiedDate = MutableLiveData<Date?>()
 
@@ -75,20 +75,21 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         val currentName = noteName.value
         val currenText = noteText.value
         val currCreateDate = createDate.value
+        val currImageFile = noteImage.value
 
         if (currentName == null || currenText == null) {
             return false
         }
 
-
         val currentNoteId = _noteId
         if (isNewNote && currentNoteId == null) {
-            insertNote(Note(noteName = currentName, noteText = currenText, createDate = Date()))
+            insertNote(Note(noteName = currentName, noteText = currenText,image = currImageFile, createDate = Date()))
         } else {
             val note = Note(
                 noteId = currentNoteId,
                 noteName = currentName,
                 noteText = currenText,
+                image = currImageFile,
                 createDate = currCreateDate?:Date(), //не факт, надо подумать
                 modifiedDate = Date()
             )
