@@ -7,6 +7,7 @@ import com.example.notesdemo.dao.NotesRepository
 import com.example.notesdemo.model.Note
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel() {
@@ -17,6 +18,7 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
     val noteImage = MutableLiveData<String?>(null)
+    val imageStream = MutableLiveData<ByteArray>(null)
     val createDate = MutableLiveData<Date>()
     val modifiedDate = MutableLiveData<Date?>()
 
@@ -60,6 +62,10 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         noteName.value = note.noteName
         noteText.value = note.noteText
         noteImage.value = note.image
+        if (note.image != null) {
+            val imageFile = File(note.image)
+            imageStream.value = imageFile.readBytes()
+        }
         createDate.value = note.createDate
         modifiedDate.value = note.modifiedDate
         isNoteLoaded = true
