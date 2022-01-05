@@ -12,13 +12,14 @@ import java.util.*
 
 class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel() {
 
-    private var _noteId: Int? = null
+    private var _noteId: Int = 0
 
     val isEditMode = MutableLiveData(false)
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
     val noteImage = MutableLiveData<String?>(null)
-    val imageStream = MutableLiveData<ByteArray>(null)
+
+    // val imageStream = MutableLiveData<ByteArray?>(null)
     val createDate = MutableLiveData<Date>()
     val modifiedDate = MutableLiveData<Date?>()
 
@@ -62,10 +63,10 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         noteName.value = note.noteName
         noteText.value = note.noteText
         noteImage.value = note.image
-        if (note.image != null) {
+        /*if (note.image != null) {
             val imageFile = File(note.image)
             imageStream.value = imageFile.readBytes()
-        }
+        }*/
         createDate.value = note.createDate
         modifiedDate.value = note.modifiedDate
         isNoteLoaded = true
@@ -88,20 +89,45 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         }
 
         val currentNoteId = _noteId
-        if (isNewNote && currentNoteId == null) {
-            insertNote(Note(noteName = currentName, noteText = currenText,image = currImageFile, createDate = Date()))
+        if (isNewNote && currentNoteId == 0) {
+            insertNote(
+                Note(
+                    noteName = currentName,
+                    noteText = currenText,
+                    image = currImageFile,
+                    createDate = Date()
+                )
+            )
         } else {
             val note = Note(
                 noteId = currentNoteId,
                 noteName = currentName,
                 noteText = currenText,
                 image = currImageFile,
-                createDate = currCreateDate?:Date(), //не факт, надо подумать
+                createDate = currCreateDate ?: Date(), //не факт, надо подумать
                 modifiedDate = Date()
             )
             updateNote(note)
         }
         return true
+    }
+
+    fun deleteOrCancelEdit() {
+        when {
+            (isEditMode.value == false && ! isNewNote) -> {
+                deleteNoteFile()
+                deleteNote(_noteId)
+            }
+            (isEditMode.value == true && ! isNewNote) -> {
+                isNoteLoaded = false
+                load(_noteId)
+                isEditMode.value = false
+            }
+            (isEditMode.value == true && isNewNote && ! noteImage.value.isNullOrEmpty()) -> {
+                deleteNoteFile()
+                isEditMode.value = false
+            }
+        }
     }
 
     fun insertNote(note: Note) = viewModelScope.launch {
@@ -111,4 +137,28 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     fun updateNote(note: Note) = viewModelScope.launch {
         notesRep.updateNote(note)
     }
+
+    fun deleteNote(noteId: Int) = viewModelScope.launch {
+        notesRep.deleteNoteById(noteId)
+    }
+
+    fun deleteNoteFile() {
+        val fileName = noteImage.value
+        if (fileName.isNullOrEmpty()) return
+        viewModelScope.launch {
+            //TODO не работает. И надо подумать: удаление картинки идет вразрез с кнопкой отмены изменений
+            val noteFile = File(fileName)
+            if (noteFile.delete()) {
+                noteImage.value = ""
+            }
+        }
+    }
+
+
+    /*fun saveFile() {
+        val bytes = imageStream.value
+        if (bytes == null) return
+        val noteFile = File(noteImage.value)
+        noteFile.writeBytes(bytes)
+    }*/
 }

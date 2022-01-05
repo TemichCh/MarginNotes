@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
 import com.example.notesdemo.utils.bindTwoWayToEditTextText
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -37,7 +39,15 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                 if (uri != null) {
                     resolver.openInputStream(uri).use { stream ->
                         val bytes = stream?.readBytes()
-                        editNoteViewModel.imageStream.value = bytes
+                        if (bytes != null) {
+                            val formatter = SimpleDateFormat("yyyyMMddhhmm")
+                            val now = Calendar.getInstance().time
+                            val newFileName = formatter.format(now)
+                            val file = File(this.filesDir, newFileName)
+                            file.writeBytes(bytes)
+                            editNoteViewModel.noteImage.value = file.path
+                            //editNoteViewModel.imageStream.value = bytes
+                        }
                     }
                 }
             }
@@ -50,6 +60,9 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbarEditNote)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
         with(editNoteViewModel) {
             load(noteId)
@@ -60,7 +73,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             noteName.bindTwoWayToEditTextText(this@CreateOrEditNoteActivity, binding.notesName)
             noteText.bindTwoWayToEditTextText(this@CreateOrEditNoteActivity, binding.notesText)
 
-            imageStream.observe(this@CreateOrEditNoteActivity) {
+            //imageStream
+            noteImage.observe(this@CreateOrEditNoteActivity) {
                 Glide.with(this@CreateOrEditNoteActivity)
                     .load(it)
                     .thumbnail(0.33f)
@@ -70,8 +84,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         }
 
 
-        setSupportActionBar(binding.toolbarEditNote)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         fabAddImageOnClick()
         fabClearImageOnClick()
@@ -80,8 +93,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
     private fun fabClearImageOnClick() {
         val fabClearImage = binding.fabEditClearImage
         fabClearImage.setOnClickListener {
-            editNoteViewModel.noteImage.value = ""
-            editNoteViewModel.imageStream.value = null
+            editNoteViewModel.deleteNoteFile()
+            //editNoteViewModel.imageStream.value = null
         }
     }
 
@@ -108,30 +121,16 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.menu_save -> {
-            if (editNoteViewModel.saveNote()){
+            if (editNoteViewModel.saveNote()) {
                 finish()
             }
             true
         }
-        /*R.id.menu_delete -> {
-            // FIXME должны просто оповещать вьюмодель, а она уже действовать
-            if (isEditMode) {
-                currentNote?.let {
-                    binding.notesName.setText(it.noteName)
-                    binding.notesText.setText(it.noteText)
-                    if (it.image != null) {
-                        openMediaStore()
-                    }
-                }
-            } else
-                if (currentNote != null) {
-                    notesVModel.delete(currentNote!!)
-                    finish()
-                }
-            isEditMode = !isEditMode
-            showCurrentMode(isEditMode)
+        R.id.menu_delete -> {
+            editNoteViewModel.deleteOrCancelEdit()
+            finish()
             true
-        }*/
+        }
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
@@ -158,7 +157,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
             fabEditAddImage.isVisible = (isEdit && isImageSet)
 
             fabEditClearImage.isVisible = (isEdit && ! isImageSet)
-
+            //TODO При добавлении новой записи иконки отрисовываются по умолчанию а не для редактирования
             toolbarEditNote.menu?.findItem(R.id.menu_save)?.apply {
                 val icon = if (isEdit) {
                     R.drawable.ic_outline_done_24
