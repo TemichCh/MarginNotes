@@ -23,4 +23,7 @@ interface NotesDao {
 
     @Query("select * from notes where noteId = :noteId")
     fun getNoteById(noteId:Int):Flow<Note>
+
+    @Query("delete from notes where noteId = :noteId")
+    suspend fun deleteNoteById(noteId:Int)
 }

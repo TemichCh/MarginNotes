@@ -33,4 +33,8 @@ class NotesRepository(private val db: NotesDao) {
         return noteById
     }
 
+    suspend fun deleteNoteById(noteId: Int){
+        db.deleteNoteById(noteId)
+    }
+
 }
