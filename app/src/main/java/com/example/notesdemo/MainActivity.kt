@@ -14,13 +14,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // FIXME это свойство точно не должно быть публичным. никто снаружи этого класса не должен знать
-    //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
-    //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
-    //  логику заполнения данных
-    private val adapter = NotesListAdapter()
-
-    // FIXME это свойство тоже не должно быть публичным. это детали реализации конкретно этого активити
+    // это свойство тоже не должно быть публичным. это детали реализации конкретно этого активити
     private val notesVModel: NotesViewModel by viewModels {
         val repository = application.getNotesRepository()
         return@viewModels ViewModelFactory(repository, this)
@@ -31,6 +25,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // это свойство точно не должно быть публичным. никто снаружи этого класса не должен знать
+        //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
+        //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
+        //  логику заполнения данных
+        val adapter = NotesListAdapter()
 
         setSupportActionBar(binding.mainActivityToolbar)
 
