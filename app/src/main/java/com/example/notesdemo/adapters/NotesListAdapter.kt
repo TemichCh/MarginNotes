@@ -5,13 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.NotesListItemBinding
 import com.example.notesdemo.extensions.humanizeDiff
 import com.example.notesdemo.model.Note
-import com.example.notesdemo.utils.showImagesThumb
 import java.util.*
 
 class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
@@ -57,16 +55,22 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         val note = notesList[position]
         holder.itemName.text = note.noteName
 
-        holder.itemDate.text = (note.modifiedDate?:note.createDate).humanizeDiff(Date())
+        holder.itemDate.text = (note.modifiedDate ?: note.createDate).humanizeDiff(Date())
         holder.itemText.text = note.noteText
+        val imageUri = note.image ?: ""
+        Glide.with(holder.image.context)
+            .load(imageUri)
+            .thumbnail(0.33f)
+            .centerCrop()
+            .into(holder.image)
 
-        // FIXME в биндинге ВСЕГДА надо обрабатывать обе ветки условий.
+        //  в биндинге ВСЕГДА надо обрабатывать обе ветки условий.
         //  когда происходит биндинг мы можем привязывать данные как к совершенно новым вьюхам,
         //  так и к уже использовавшимся, где уже есть какая-то картинка, текста и прочее.
         //  и если это не сбрасывать - юзер увидит некорректные данные
         //  (просто надо скроллить длинный список и это будет видно)
-        if (note.image != null) {
-            // FIXME опять же вместо форскаста следует использовать смарт каст
+        /*if (note.image != null) {
+            //  опять же вместо форскаста следует использовать смарт каст
             //  для этого надо сохранить image в локальную переменную и проверить в
             //  if (noteImage != null) и внутри блока этого условия будет noteImage не нуллабельный
             //  https://kotlinlang.org/docs/typecasts.html#smart-casts
@@ -77,7 +81,7 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
                 .thumbnail(0.33f)
                 .centerCrop()
                 .into(holder.image)
-        }
+        }*/
 
       //  holder.itemView.setBackgroundColor(if (note.selected) Color.GREEN else Color.TRANSPARENT)
 
@@ -108,15 +112,11 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         return notesList.size
     }
 
-    // FIXME эта функция не является зоной ответственности адаптера для ресайкла -
-    //  тут ей не место (вообще во вьюмодели должна быть)
-   // fun getSelectedList() = notesList.filter { note -> note.selected }
-
 }
 
 
 class NotesViewHolder(binding: NotesListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    // FIXME для всех свойств надо указывать тип чтобы:
+    // для всех свойств надо указывать тип чтобы:
     //  1. при чтении было понятно что тут будет храниться
     //  2. IDE не ругалась что у нас тип от Java не понятно нуллабелен или нет
     val itemDate: TextView = binding.listItemDate
