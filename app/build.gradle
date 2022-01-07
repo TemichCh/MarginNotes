@@ -79,5 +79,7 @@ dependencies {
     implementation(libs.common.java8)
     //Glide for image loading
     implementation(libs.glide)
+    //recyclerview-selection
+    implementation(libs.rv.selection)
 
 }
