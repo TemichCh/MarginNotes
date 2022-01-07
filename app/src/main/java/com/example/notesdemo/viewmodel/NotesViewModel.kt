@@ -19,9 +19,10 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     val flow = channel.receiveAsFlow()
 */
     val searchQuery = MutableLiveData("")
-    val selectedNotes = MutableLiveData<MutableList<Int>>()
+    val selectedNotes = MutableLiveData<List<Int>>()
 
     val selectionMode: MutableLiveData<Boolean> = Transformations.map(selectedNotes) {
+        // Наверно это лишнее.
         it.isNotEmpty()
     } as MutableLiveData<Boolean> //MutableLiveData(false)
 
@@ -35,32 +36,16 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
             }
         }
 
-
-    fun delete(note: Note) = viewModelScope.launch {
-        notesRep.deleteNote(note)
+    fun deleteSelected() = viewModelScope.launch {
+        selectedNotes.value?.forEach { noteId ->
+            notesRep.deleteNoteById(noteId)
+        }
+        selectionMode.value = false
     }
-
 
     fun onNotePressed(context: Context, noteId: Int) {
         if (selectionMode.value != true) {
             context.startActivity(CreateOrEditNoteActivity.createIntent(context, noteId))
-        } else {
-            if (selectedNotes.value?.contains(noteId) == true) {
-                selectedNotes.value?.remove(noteId)
-            } else {
-                selectedNotes.value?.add(noteId)
-            }
         }
     }
-
-    fun onNoteLongClick(context: Context, noteId: Int) {
-        selectionMode.value = true
-        onNotePressed(context, noteId)
-    }
-
-    fun deselectAllItems() {
-        selectedNotes.value?.clear()
-        selectionMode.value = false
-    }
-
 }
