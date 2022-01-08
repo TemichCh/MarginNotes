@@ -11,23 +11,28 @@ const val MINUTE = 60 * SECOND
 const val HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
 
+object DateFormatter: SimpleDateFormat("HH:mm:ss dd.MM.yy",Locale("ru"))
+
+
 fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
-    // FIXME SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
+    // ??? SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
     //  особенно учитывая что эта функция будет вызываться при скролле recyclerview множество раз
     //  в секунду то мы можем получить лаги. стоит использовать shared isntance - создать приватное
     //  свойство в этом файле и там хранить объект созданный
-    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
-    return dateFormat.format(this)
+    //val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
+    DateFormatter.applyPattern(pattern)
+    return DateFormatter.format(this)
 }
 
 fun Date.shortFormat(): String {
     val pattern = if (this.isSameDay(Date())) "HH:mm" else "dd.MM.yy"
-    // FIXME SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
+    // ??? SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
     //  особенно учитывая что эта функция будет вызываться при скролле recyclerview множество раз
     //  в секунду то мы можем получить лаги. стоит использовать shared isntance - создать приватное
     //  свойство в этом файле и там хранить объект созданный
-    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
-    return dateFormat.format(this)
+    //val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
+    DateFormatter.applyPattern(pattern)
+    return DateFormatter.format(this)
 }
 
 fun Date.isSameDay(date: Date): Boolean {
@@ -41,27 +46,12 @@ fun Date.isSameDay(date: Date): Boolean {
 
 }
 
-// FIXME не используемая функция, убрать стоит :)
-fun Date.add(value: Int, units: TimeUnits): Date {
-    var time = this.time
-
-    time += when (units) {
-        TimeUnits.SECOND -> value.toLong() * SECOND
-        TimeUnits.MINUTE -> value.toLong() * MINUTE
-        TimeUnits.HOUR -> value.toLong() * HOUR
-        TimeUnits.DAY -> value.toLong() * DAY
-    }
-    this.time = time
-    return this
-}
-
-
-enum class TimeUnits {
+/*enum class TimeUnits {
     SECOND,
     MINUTE,
     HOUR,
     DAY
-}
+}*/
 
 // FIXME тут сразу много зла - непонятные имена аргументов, непонятный тип результата, логика
 //  внутри сложна для понимания из-за кривых имен.
