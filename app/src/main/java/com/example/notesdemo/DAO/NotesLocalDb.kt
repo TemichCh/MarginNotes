@@ -88,7 +88,8 @@ private class NotesItemsCallback(val scope: CoroutineScope) : RoomDatabase.Callb
         //  https://developer.android.com/training/data-storage/room/prepopulate
         //  я бы поискал более надежное и аккуратно выглядящее решение для заполнения данными через dao
         // По ссылке выше описание подключения уже имеющейся БД из внешнего файла
-        // В данном случае задача просто добавить приветствие при создании БД, хотя не знаю насколько это актуально, может устарело
+        // В данном случае задача просто добавить приветствие при создании БД,
+        // хотя не знаю насколько это актуально, может устарело
         // https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1#4785
         NotesLocalDb.INSTANCE?.let {
             scope.launch {
