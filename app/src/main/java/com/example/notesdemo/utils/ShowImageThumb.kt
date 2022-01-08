@@ -39,12 +39,12 @@ fun showImagesThumb(context: Context,imageUri: Uri): Uri? {
         if (cursor.moveToNext()) {
             val thumbColumn: Int =
                 cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-            val _thumpId: Int = cursor.getInt(thumbColumn)
-            val imageUri_t = ContentUris.withAppendedId(
+            val thumpId: Int = cursor.getInt(thumbColumn)
+            val imageUriRetun = ContentUris.withAppendedId(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                _thumpId.toLong()
+                thumpId.toLong()
             )
-            return imageUri_t
+            return imageUriRetun
         }
         else return null
     }
