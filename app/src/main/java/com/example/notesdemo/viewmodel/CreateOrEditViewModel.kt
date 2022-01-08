@@ -43,20 +43,15 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
 
         viewModelScope.launch {
             notesRep.getNoteById(noteId).collect { note ->
-                //FIXME Переделать на catch т.к. note always not null
-                if (note != null) {
-                    onNoteLoaded(note)
-                } else {
-                    onDataNotAvailable()
-                }
+                onNoteLoaded(note)
             }
         }
     }
 
-    private fun onDataNotAvailable() {
-        //Toast.makeText(, s, Toast.LENGTH_LONG).show()
-        println("****** no data available")
-    }
+    /* private fun onDataNotAvailable() {
+         //Toast.makeText(it,, Toast.LENGTH_LONG).show()
+         println("****** no data available")
+     }*/
 
 
     private fun onNoteLoaded(note: Note) {
@@ -66,7 +61,8 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
         /*if (note.image != null) {
             val imageFile = File(note.image)
             imageStream.value = imageFile.readBytes()
-        }*/
+        }
+        */
         createDate.value = note.createDate
         modifiedDate.value = note.modifiedDate
         isNoteLoaded = true
@@ -145,20 +141,12 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     fun deleteNoteFile() {
         val fileName = noteImage.value
         if (fileName.isNullOrEmpty()) return
-        viewModelScope.launch {
-            //TODO не работает. И надо подумать: удаление картинки идет вразрез с кнопкой отмены изменений
-            val noteFile = File(fileName)
-            if (noteFile.delete()) {
-                noteImage.value = ""
-            }
+        //viewModelScope.launch {
+        //TODO надо подумать: удаление картинки идет в разрез с кнопкой отмены изменений
+        val noteFile = File(fileName)
+        val deleted = noteFile.delete()
+        if (deleted) {
+            noteImage.value = ""
         }
     }
-
-
-    /*fun saveFile() {
-        val bytes = imageStream.value
-        if (bytes == null) return
-        val noteFile = File(noteImage.value)
-        noteFile.writeBytes(bytes)
-    }*/
 }

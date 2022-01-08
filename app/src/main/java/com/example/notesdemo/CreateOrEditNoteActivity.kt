@@ -15,10 +15,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.notesdemo.databinding.ActivityEditNoteBinding
+import com.example.notesdemo.extensions.format
 import com.example.notesdemo.utils.bindTwoWayToEditTextText
 import com.example.notesdemo.viewmodel.CreateOrEditViewModel
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -40,9 +40,8 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                     resolver.openInputStream(uri).use { stream ->
                         val bytes = stream?.readBytes()
                         if (bytes != null) {
-                            val formatter = SimpleDateFormat("yyyyMMddhhmm")
                             val now = Calendar.getInstance().time
-                            val newFileName = formatter.format(now)
+                            val newFileName = now.format("yyyyMMddhhmm")
                             val file = File(this.filesDir, newFileName)
                             file.writeBytes(bytes)
                             editNoteViewModel.noteImage.value = file.path
@@ -75,15 +74,14 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
 
             //imageStream
             noteImage.observe(this@CreateOrEditNoteActivity) {
+                val imageUri = it ?: ""
                 Glide.with(this@CreateOrEditNoteActivity)
-                    .load(it)
+                    .load(imageUri)
                     .thumbnail(0.33f)
                     .centerCrop()
                     .into(binding.notesImage)
             }
         }
-
-
 
 
         fabAddImageOnClick()
@@ -94,7 +92,6 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         val fabClearImage = binding.fabEditClearImage
         fabClearImage.setOnClickListener {
             editNoteViewModel.deleteNoteFile()
-            //editNoteViewModel.imageStream.value = null
         }
     }
 
