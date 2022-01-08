@@ -7,12 +7,13 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 
-// FIXME тут вижу работу с contentResolver - это хорошо. но мы не должны ломать сами uri -
+//  тут вижу работу с contentResolver - это хорошо. но мы не должны ломать сами uri -
 //  нам внешние приложения дают uri ровно по которому можно считать изображение, в тот момент когда
 //  uri нам отдали. по этому uri надо считать изображение, положить в наши файлы и показывать картинки
 //  из наших локальных файлов
 //  надо считать по uri поток и записать в файл - https://developer.android.com/training/data-storage/shared/media#open-file-stream
 //  этот поток надо в файл писать так https://developer.android.com/training/data-storage/app-specific#internal-access-store-files
+@Deprecated("процедура больше не нужна, оствил для примера на всякий")
 fun showImagesThumb(context: Context,imageUri: Uri): Uri? {
     val doc = imageUri.lastPathSegment?.split(":")
     val docId = doc?.get(doc.lastIndex)
