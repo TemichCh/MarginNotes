@@ -15,4 +15,6 @@
     <string name="update_note">Записываем изменения</string>
     <string name="searchQueryHint">Введите наименование для поиска</string>
     <string name="selectPictureTitle">Выберите изображение</string>
+    <string name="timeAgo">назад</string>
+    <string name="timeForward">вперед</string>
 </resources>

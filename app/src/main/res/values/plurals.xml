@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="seconds">
+        <item quantity="one">только что</item>
+        <item quantity="other">несколько секунд</item>
+    </plurals>
+
+
+    <plurals name="minutes">
+        <item quantity="one">%d минуту</item>
+        <item quantity="few">$d минуты</item>
+        <item quantity="many">%d минут</item>
+    </plurals>
+
+    <plurals name="hours">
+        <item quantity="one">час</item>
+        <item quantity="few">$d часа</item>
+        <item quantity="many">%d часов</item>
+    </plurals>
+
+    <plurals name="days">
+        <item quantity="one">день</item>
+        <item quantity="few">$d дня</item>
+        <item quantity="many">%d дней</item>
+    </plurals>
+
+</resources>
