@@ -5,6 +5,7 @@ import com.example.notesdemo.dao.NotesLocalDb
 import com.example.notesdemo.dao.NotesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 // FIXME: видимо глобальное замечание - надо сделать автоформатирование кода, пробелы где полагается отстутвуют.
 //  в меню правой кнопки - Reformat Code (на директории с сорсами). и при работе с кодом хоткеем вызывать эту функцию
@@ -30,7 +31,10 @@ class NotesApplication:Application() {
     //  надо заинтегрировать Hilt https://developer.android.com/training/dependency-injection/hilt-android
     val repository by lazy { NotesRepository(database.localNotesDao()) }
 
-
+    override fun onTerminate() {
+        super.onTerminate()
+        applicationScope.cancel()
+    }
 }
 
 fun Application.getNotesRepository(): NotesRepository {
