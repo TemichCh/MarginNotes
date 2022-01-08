@@ -13,6 +13,7 @@ const val DAY = 24 * HOUR
 
 object DateFormatter: SimpleDateFormat("HH:mm:ss dd.MM.yy",Locale("ru"))
 
+//По факту все эти процедуры кроме humanizeDiff не используются.
 
 fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
     // ??? SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
@@ -73,6 +74,8 @@ fun daysToString(l: Long, s: String, s1: String, s2: String): Any {
 //  https://developer.android.com/guide/topics/resources/string-resource
 //  и упростить принцип сборки итоговой строки - по сути разница "через" и "назад" только в суффиксе
 //  и постфиксе строки, а контент одинаковый внутри
+
+//не понял как достучаться до ресурсов из этого модуля (
 fun Date.humanizeDiff(date: Date = Date()): String {
     val thisTime = date.time
     val anotherTime = this.time
