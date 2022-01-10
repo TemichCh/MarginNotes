@@ -18,7 +18,8 @@ class CreateOrEditViewModel(private val notesRep: NotesRepository) : ViewModel()
     val noteName = MutableLiveData<String>()
     val noteText = MutableLiveData<String>()
     val noteImage = MutableLiveData<String?>(null)
-
+    //??? Первоначально хотел сохранить картинку в stream и в момент записи в БД уже сохранять
+    // в файл, но тут тогда тоже нужен context наверно, не смог достучаться до filesDir
     // val imageStream = MutableLiveData<ByteArray?>(null)
     val createDate = MutableLiveData<Date>()
     val modifiedDate = MutableLiveData<Date?>()

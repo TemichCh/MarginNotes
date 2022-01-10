@@ -25,5 +25,6 @@ interface NotesDao {
     fun getNoteById(noteId:Int):Flow<Note>
 
     @Query("delete from notes where noteId = :noteId")
+    //??? возможно тут должна быть маркировка Delete?
     suspend fun deleteNoteById(noteId:Int)
 }

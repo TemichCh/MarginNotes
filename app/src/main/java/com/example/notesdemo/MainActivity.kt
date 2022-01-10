@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         //  об этой детали реализации. А также ссылка на adapter нужна нам только в течении создания view
         //  в onCreate, и только там нам надо создать адаптер, прицепить его к recyclerView и указать
         //  логику заполнения данных
+        // ??? перенес из класса в onCreate
         val adapter = NotesListAdapter()
 
         setSupportActionBar(binding.mainActivityToolbar)
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         //  эта пачка логики должна уйти в вьюмодель и по сути делать следующее:
         //  лайвдата selectionMode включается в true, в лайвдату selectedNotes добавляем id выбранного наим элемента
         //  а уже на основе этих лайвдат у нас должен перестраиваться UI, за счет поставленных в onCreate observe
-        // Можно считать решением?
+        // ??? Можно считать решением использование tracker
         tracker?.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
