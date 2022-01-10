@@ -31,12 +31,14 @@ class NotesApplication:Application() {
     //  надо заинтегрировать Hilt https://developer.android.com/training/dependency-injection/hilt-android
     val repository by lazy { NotesRepository(database.localNotesDao()) }
 
+    //??? У Application не нашел onDestroy
     override fun onTerminate() {
         super.onTerminate()
         applicationScope.cancel()
     }
 }
 
+//??? пошел по простому пути пока
 fun Application.getNotesRepository(): NotesRepository {
     return (this as NotesApplication).repository
 }

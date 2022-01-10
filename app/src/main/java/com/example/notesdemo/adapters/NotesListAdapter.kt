@@ -50,8 +50,12 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
         notesList.addAll(notes)
         //  в пару к notifyDataSetChanged стоит указать в init блоке адаптера setHasStableIds(true)
         //  чтобы были анимации изменений из коробки
+
+        //???
+        //IDE подсказывает использовать этот вызов в крайнем случае, но без него не обновляются данные
+        //скорее всего необходимо вынести notesList в объявление класса?
+        //Опять же возможно не видит изменение из-за notesList.addAll?? Хотя clear() должен был сработать.
         notifyDataSetChanged()
-        //
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
@@ -91,6 +95,8 @@ class NotesListAdapter : RecyclerView.Adapter<NotesViewHolder>() {
 
     // FIXME нет смысла добавлять такой сеттер - свойство listener уже публичное и мутабельное, его
     //  напрямую можно из вне менять, а сам сеттер не добавляет вообще никакой логики
+    //???
+    //itemClickListener сделал ptivate var но думаю речь была не про это
     fun setOnNoteTapListener(listener: ((Note) -> Unit)) {
         this.itemClickListener = listener
     }
@@ -112,6 +118,7 @@ class NotesViewHolder(binding: NotesListItemBinding) : RecyclerView.ViewHolder(b
     val image: ImageView = binding.ivHasImage
 
     fun selected(isSelected: Boolean = false) {
+        //TODO решение с цветом "временное" надо подобрать вариант получше
         itemView.setBackgroundColor(if (isSelected) Color.GREEN else Color.TRANSPARENT)
     }
 

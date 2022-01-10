@@ -40,8 +40,15 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
                     resolver.openInputStream(uri).use { stream ->
                         val bytes = stream?.readBytes()
                         if (bytes != null) {
+                            //??? с одной стороны нашему приложению достаточно знать как оно хранит файлы
+                            // с другой неплохо было бы чтобы система тоже могла их видеть
+                            // изначально у меня и была мысль использовать файлы из общего хранилища
+                            // чтобы не дублировать их в системе
                             val now = Calendar.getInstance().time
                             val newFileName = now.format("yyyyMMddhhmm")
+                            //??? Вместо filesDir наверное лучше использовать context.getExternalFilesDir(
+                            //            Environment.DIRECTORY_PICTURES)
+                            //https://developer.android.com/training/data-storage/app-specific#media
                             val file = File(this.filesDir, newFileName)
                             file.writeBytes(bytes)
                             editNoteViewModel.noteImage.value = file.path
@@ -62,6 +69,7 @@ class CreateOrEditNoteActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarEditNote)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        //??? вынести в fun bindViewModel
         val noteId = intent.getIntExtra(INTENT_EXTRA_NOTE, 0)
         with(editNoteViewModel) {
             load(noteId)

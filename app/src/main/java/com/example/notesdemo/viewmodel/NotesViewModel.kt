@@ -22,7 +22,8 @@ class NotesViewModel(private val notesRep: NotesRepository) : ViewModel() {
     val selectedNotes = MutableLiveData<List<Int>>()
 
     val selectionMode: MutableLiveData<Boolean> = Transformations.map(selectedNotes) {
-        // Наверно это лишнее.
+        // ??? Наверно это лишнее. Идея в том что selectionMode действует пока есть выбранные элементы
+        // а его все равно приходится включать/выключать
         it.isNotEmpty()
     } as MutableLiveData<Boolean> //MutableLiveData(false)
 

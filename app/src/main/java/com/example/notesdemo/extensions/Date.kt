@@ -11,9 +11,11 @@ const val MINUTE = 60 * SECOND
 const val HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
 
+//???
+//Формат по умолчанию и локализация захардкожены надо как-то переделать (
 object DateFormatter: SimpleDateFormat("HH:mm:ss dd.MM.yy",Locale("ru"))
 
-//По факту все эти процедуры кроме humanizeDiff не используются.
+//По факту все эти процедуры кроме humanizeDiff не используются (еще format при сохранении файлов, но тут тоже спорно).
 
 fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
     // ??? SimpleDateFormat создавать на каждом вызове новый объект форматтера - трудоемко,
